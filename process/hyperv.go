@@ -32,7 +32,24 @@ func VmState(name string) {
 	fmt.Print(execCmdGetVmState(name) + "\n")
 }
 
-//--------------- internal function ---------------
+func VmOperation(name string, operation string) {
+	state := execCmdGetVmState(name)
+	if state != "Running" && operation == "start" {
+		cmd := exec.Command("powershell", "-NoProfile", "Start-VM '" + name +"'")
+		err := cmd.Run()
+		if err != nil {
+			panic(err)
+		}
+	} else if state == "Running" && operation == "shutdown" {
+                cmd := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '" + name +"'")
+                err := cmd.Run()
+                if err != nil {
+                        panic(err)
+                }
+	}
+}
+
+// --------------- internal function --------------- //
 func execCmdGetVMList(arg string) {
 	cmd := exec.Command("powershell", "-NoProfile", arg)
 	res, err := cmd.Output()

@@ -19,6 +19,8 @@ func init() {
 	RootCmd.AddCommand(
 		list,
 		state,
+		start,
+		shutdown,
 	)
 
 	list.Flags().Bool("active", true, "list active vm's")
