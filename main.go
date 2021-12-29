@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/DevelopNaoki/mkvm/cmd"
+	"github.com/DevelopNaoki/manahy/cmd"
 )
 
 func main() {
