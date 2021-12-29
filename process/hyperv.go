@@ -35,17 +35,31 @@ func VmState(name string) {
 func VmOperation(name string, operation string) {
 	state := execCmdGetVmState(name)
 	if state != "Running" && operation == "start" {
-		cmd := exec.Command("powershell", "-NoProfile", "Start-VM '" + name +"'")
+		cmd := exec.Command("powershell", "-NoProfile", "Start-VM '"+name+"'")
 		err := cmd.Run()
 		if err != nil {
 			panic(err)
 		}
-	} else if state == "Running" && operation == "shutdown" {
-                cmd := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '" + name +"'")
-                err := cmd.Run()
-                if err != nil {
-                        panic(err)
-                }
+	} else if state == "Running" {
+		if operation == "shutdown" {
+			cmd := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '"+name+"'")
+			err := cmd.Run()
+			if err != nil {
+				panic(err)
+			}
+		} else if operation == "destroy" {
+                        cmd := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '"+name+"' -Force")
+                        err := cmd.Run()
+                        if err != nil {
+                                panic(err)
+                        }
+		} else if operation == "saved" {
+			cmd := exec.Command("powershell", "-NoProfile", "Save-VM -Name '"+name+"'")
+                        err := cmd.Run()
+                        if err != nil {
+                                panic(err)
+                        }
+		}
 	}
 }
 

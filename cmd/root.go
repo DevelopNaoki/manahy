@@ -21,6 +21,8 @@ func init() {
 		state,
 		start,
 		shutdown,
+		destroy,
+		saved,
 	)
 
 	list.Flags().Bool("active", true, "list active vm's")
