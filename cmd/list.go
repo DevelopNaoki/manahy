@@ -23,7 +23,7 @@ var list = &cobra.Command{
 			option = "off"
 		}
 
-                save, _ := cmd.Flags().GetBool("save")
+                save, _ := cmd.Flags().GetBool("saved")
                 if save {
                         option = "save"
                 }
