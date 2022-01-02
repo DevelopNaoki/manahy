@@ -1,59 +1,62 @@
 package process
 
 import (
-	"fmt"
+	"os/exec"
 )
 
-func VmList(option string) {
-	if option == "running" || option == "all" {
-		fmt.Print("Running VM's\n")
-		activeVms := GetVMList("Running")
-		for _, l := range activeVms {
-			fmt.Printf("- %s\n", l)
-		}
-		fmt.Print("\n")
+func GetVMList(state string) (list []string) {
+	cmd := exec.Command("powershell", "-NoProfile", "Get-VM | where {$_.State -eq '"+state+"'} | Select-Object Name")
+	res, err := cmd.Output()
+	if err != nil {
+		panic(err)
 	}
-	if option == "save" || option == "all" {
-		fmt.Print("Saved VM's\n")
-		savedVms := GetVMList("Saved")
-		for _, l := range savedVms {
-			fmt.Printf("- %s\n", l)
+	list = listingOfExecuteResults(res, "Name")
+	return
+}
+
+func GetVmState(name string) (state string) {
+	args := "Get-VM '" + name + "' | Select-Object State"
+	cmd := exec.Command("powershell", "-NoProfile", args)
+	res, err := cmd.Output()
+	if err != nil {
+		state = "NotFound"
+	} else {
+		list := listingOfExecuteResults(res, "State")
+		if len(list) == 1 {
+			state = list[0]
 		}
-		fmt.Print("\n")
 	}
-	if option == "off" || option == "all" {
-		fmt.Print("Stop VM's\n")
-		offVms := GetVMList("Off")
-		for _, l := range offVms {
-			fmt.Printf("- %s\n", l)
-		}
-		fmt.Print("\n")
+	return
+}
+
+func StartVm(name string) {
+	cmd := exec.Command("powershell", "-NoProfile", "Start-VM '"+name+"'")
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
 	}
 }
 
-func VmState(name string) {
-	fmt.Print(GetVmState(name) + "\n")
+func StopVm(name string) {
+	cmd := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '"+name+"'")
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
+	}
 }
 
-func VmOperation(name string, operation string) {
-	state := GetVmState(name)
-	switch operation {
-	case "start":
-		if state != "Running" {
-			StartVm(name)
-		}
-        case "saved":
-                if state == "Running" {
-                        SaveVm(name)
-                }
-        }
-	case "shutdown":
-		if state == "Running" {
-			StopVm(name)
-		}
-	case "destroy":
-		if state == "Running" {
-			DestroyVm(name)
-		}
+func DestroyVm(name string) {
+	cmd := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '"+name+"' -Force")
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func SaveVm(name string) {
+	cmd := exec.Command("powershell", "-NoProfile", "Save-VM -Name '"+name+"'")
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
 	}
 }

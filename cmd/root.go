@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/DevelopNaoki/manahy/process"
 	"github.com/spf13/cobra"
-        "github.com/DevelopNaoki/manahy/process"
 )
 
 var RootCmd = &cobra.Command{
@@ -21,12 +21,12 @@ func init() {
 		start,
 		shutdown,
 		destroy,
-		saved,
+		save,
 		exitCodeList,
 	)
 
-	list.Flags().Bool("active", true, "list active vm's")
-	list.Flags().Bool("inactive", false, "list inactive vm's")
-        list.Flags().Bool("saved", false, "list save vm's")
-	list.Flags().Bool("all", false, "list all vm's")
+	list.Flags().BoolVarP(&listOption.active, "active", "", true, "list active vm's")
+	list.Flags().BoolVarP(&listOption.inactive, "inactive", "", false, "list inactive vm's")
+	list.Flags().BoolVarP(&listOption.saved, "saved", "", false, "list save vm's")
+	list.Flags().BoolVarP(&listOption.all, "all", "", false, "list all vm's")
 }

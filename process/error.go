@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-func ExitCodeList () {
+func ExitCodeList() {
 	fmt.Print("Exit code | status\n")
 	fmt.Print("        0 | - It ran successfully\n")
 	fmt.Print("        1 | - The command does not exist. Run \"manahy help\" or \"manahy [command] help\", Run the appropriate command again\n")
 }
 
-func Error (code int) {
+func Error(code int) {
 	switch code {
 	case 1:
 		fmt.Print("error: need valid command\n")

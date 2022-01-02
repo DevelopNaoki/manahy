@@ -1,10 +1,9 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
 	"github.com/DevelopNaoki/manahy/process"
+	"github.com/spf13/cobra"
 )
-
 
 var exitCodeList = &cobra.Command{
 	Use:   "exitcode",
