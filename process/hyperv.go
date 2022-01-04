@@ -4,7 +4,8 @@ import (
 	"os/exec"
 )
 
-func GetVMList(state string) (list []string) {
+// GetVmList get a list of VMs
+func GetVmList(state string) (list []string) {
 	cmd := exec.Command("powershell", "-NoProfile", "Get-VM | where {$_.State -eq '"+state+"'} | Select-Object Name")
 	res, err := cmd.Output()
 	if err != nil {
@@ -14,6 +15,7 @@ func GetVMList(state string) (list []string) {
 	return
 }
 
+// GetVmState get a VM state
 func GetVmState(name string) (state string) {
 	args := "Get-VM '" + name + "' | Select-Object State"
 	cmd := exec.Command("powershell", "-NoProfile", args)
@@ -29,6 +31,7 @@ func GetVmState(name string) (state string) {
 	return
 }
 
+// StartVm start the VM
 func StartVm(name string) {
 	cmd := exec.Command("powershell", "-NoProfile", "Start-VM '"+name+"'")
 	err := cmd.Run()
@@ -37,6 +40,7 @@ func StartVm(name string) {
 	}
 }
 
+// StopVm stop the VM
 func StopVm(name string) {
 	cmd := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '"+name+"'")
 	err := cmd.Run()
@@ -45,6 +49,7 @@ func StopVm(name string) {
 	}
 }
 
+// DestroyVm force stop VM
 func DestroyVm(name string) {
 	cmd := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '"+name+"' -Force")
 	err := cmd.Run()
@@ -53,6 +58,7 @@ func DestroyVm(name string) {
 	}
 }
 
+// SaveVm save VM
 func SaveVm(name string) {
 	cmd := exec.Command("powershell", "-NoProfile", "Save-VM -Name '"+name+"'")
 	err := cmd.Run()

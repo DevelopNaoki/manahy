@@ -25,7 +25,7 @@ var list = &cobra.Command{
 
 		if listOption.active || listOption.all {
 			fmt.Print("Running VM's\n")
-			activeVms := process.GetVMList("Running")
+			activeVms := process.GetVmList("Running")
 			for _, l := range activeVms {
 				fmt.Printf("- %s\n", l)
 			}
@@ -34,7 +34,7 @@ var list = &cobra.Command{
 
 		if listOption.saved || listOption.all {
 			fmt.Print("Saved VM's\n")
-			activeVms := process.GetVMList("Saved")
+			activeVms := process.GetVmList("Saved")
 			for _, l := range activeVms {
 				fmt.Printf("- %s\n", l)
 			}
@@ -43,7 +43,7 @@ var list = &cobra.Command{
 
 		if listOption.inactive || listOption.all {
 			fmt.Print("Inactive VM's\n")
-			activeVms := process.GetVMList("Off")
+			activeVms := process.GetVmList("Off")
 			for _, l := range activeVms {
 				fmt.Printf("- %s\n", l)
 			}
