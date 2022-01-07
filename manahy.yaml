@@ -1,0 +1,36 @@
+vms:
+  vm1:
+    name: test
+    generation: 1
+    memory:
+      size: 1024
+      dynamic: false
+    cpu:
+      thread: 1
+      nested: true
+    path: C:\test
+    image: C:\test\test.iso
+    disk: 
+    - disk1
+    - disk2
+    network:
+    - ex1
+    - internal
+disks:
+  disk1:
+    name: testdisk
+    size: 10
+    path: C:\test
+  disk2:
+    name: disk2
+    import: true
+    path: C:\test2
+networks:
+  sw1:
+    name: ex1
+    type: external
+    extername-interface: "Ethernet 1"
+    allow-management-os: true
+  sww2:
+    name: internal
+    type: internal

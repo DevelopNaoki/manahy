@@ -1,18 +1,25 @@
 package process
 
 type YamlFile struct {
-	VMs []VM
+	Vms      map[string]Vm      `yaml:"vms"`
+	Disks    map[string]Disk      `yaml:"disks"`
+	Networks map[string]Network `yaml:"networks"`
 }
 
-type VM struct {
-	Name       string    `yaml:"name"`
-	Generation int       `yaml:"generation"`
-	Memorys    Memory    `yaml:"memory"`
-	Cpus       Cpu       `yaml:"cpu"`
-	Path       string    `yaml:"path"`
-	Image      string    `yaml:"image"`
-	Disks      []Disk    `yaml:"disk"`
-	Networks   []Network `yaml:"network"`
+type Vm struct {
+	Name       string   `yaml:"name"`
+	Generation int      `yaml:"generation"`
+	CPU        CPU      `yaml:"cpu"`
+	Memory     Memory   `yaml:"memory"`
+	Path       string   `yaml:"path"`
+	Image      string   `yaml:"image"`
+	Disk       []string `yaml:"disk"`
+	Network    []string `yaml:"network"`
+}
+
+type CPU struct {
+	Thread int  `yaml:"thread"`
+	Nested bool `yaml:"nested"`
 }
 
 type Memory struct {
@@ -20,21 +27,16 @@ type Memory struct {
 	Dynamic bool `yaml:"dynamic"`
 }
 
-type Cpu struct {
-	Thread int  `yaml:"thread"`
-	Nested bool `yaml:"nested"`
-}
-
 type Disk struct {
 	Name   string `yaml:"name"`
-	Size   int    `yaml:"size"`
+	Size   int    `yaml:"size,omitempty"`
 	Path   string `yaml:"path"`
-	Import bool   `yaml:"import"`
+	Import bool   `yaml:"import,omitempty"`
 }
 
 type Network struct {
-	Name              string `yaml:"name"`
-	Type              string `yaml:"type"`
-	ExternalInterface string `yaml:"external-interface"`
-	AllowManagementOS bool   `yaml:"allow-management-os"`
+	Name               string `yaml:"name"`
+	Type               string `yaml:"type"`
+	ExternameInterface string `yaml:"extername-interface,omitempty"`
+	AllowManagementOs  bool   `yaml:"allow-management-os,omitempty"`
 }
