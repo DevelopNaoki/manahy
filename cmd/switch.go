@@ -61,3 +61,18 @@ var switchList = &cobra.Command{
                 return nil
         },
 }
+
+var switchType = &cobra.Command{
+        Use:   "type",
+        Short: "Print switch type",
+        Args:  cobra.RangeArgs(0, 1),
+        RunE: func(cmd *cobra.Command, args []string) error {
+                if len(args) == 1 {
+                        fmt.Print(process.GetSwitchType(args[0]) + "\n")
+                } else {
+                        fmt.Print("error: Too many or too few arguments\n")
+                }
+
+                return nil
+        },
+}

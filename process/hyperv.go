@@ -17,7 +17,7 @@ func GetVmList(state string) (list []string) {
 
 // GetVmState get a VM state
 func GetVmState(name string) (state string) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-VM '" + name + "' | Format-Table State")
+	cmd := exec.Command("powershell", "-NoProfile", "Get-VM '" +name+ "' | Format-Table State")
 	res, err := cmd.Output()
 	if err != nil {
 		state = "NotFound"
@@ -30,25 +30,6 @@ func GetVmState(name string) (state string) {
 	return
 }
 
-// GetSwitchList get a list of Switch
-func GetSwitchList(state string) (list []string){
-        cmd := exec.Command("powershell", "-NoProfile", "Get-VMSwitch * | where {$_.SwitchType -eq '"+state+"'} | Format-Table Name")
-        res, err := cmd.Output()
-        if err != nil {
-                panic(err)
-        }
-        list = listingOfExecuteResults(res, "Name")
-        return
-}
-/*
-func CreateDisk(disk Disk) {
-
-}
-
-func AttachDisk(disk Disk) {
-
-}
-*/
 // StartVm start the VM
 func StartVm(name string) {
 	cmd := exec.Command("powershell", "-NoProfile", "Start-VM '"+name+"'")

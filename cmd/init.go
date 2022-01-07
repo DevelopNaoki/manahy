@@ -8,7 +8,6 @@ func init() {
         cobra.OnInitialize()
         RootCmd.AddCommand(
                 exitCodeList,
-                read,
 		vmCmd,
 		switchCmd,
         )
@@ -29,10 +28,16 @@ func init() {
 
 	switchCmd.AddCommand(
 		switchList,
+		switchType,
+		switchChangeCmd,
 	)
 
 	switchList.Flags().BoolVarP(&switchListOption.external, "external", "", false, "list external vm's")
         switchList.Flags().BoolVarP(&switchListOption.internal, "internal", "", false, "list internal vm's")
         switchList.Flags().BoolVarP(&switchListOption.private, "private", "", false, "list private vm's")
         switchList.Flags().BoolVarP(&switchListOption.all, "all", "", true, "list all vm's")
+
+	switchChangeCmd.AddCommand(
+		switchChangeType,
+	)
 }
