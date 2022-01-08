@@ -17,7 +17,7 @@ func GetVmList(state string) (list []string) {
 
 // GetVmState get a VM state
 func GetVmState(name string) (state string) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-VM '" +name+ "' | Format-Table State")
+	cmd := exec.Command("powershell", "-NoProfile", "Get-VM '"+name+"' | Format-Table State")
 	res, err := cmd.Output()
 	if err != nil {
 		state = "NotFound"
