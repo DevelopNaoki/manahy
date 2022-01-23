@@ -9,30 +9,33 @@ type YamlFile struct {
 type Vm struct {
 	Name       string   `yaml:"name"`
 	Generation int      `yaml:"generation"`
-	CPU        CPU      `yaml:"cpu"`
+	Cpu        Cpu      `yaml:"cpu"`
 	Memory     Memory   `yaml:"memory"`
 	Path       string   `yaml:"path"`
-	Image      string   `yaml:"image"`
+	Image      string   `yaml:"image,omitempty"`
 	Disk       []string `yaml:"disk"`
 	Network    []string `yaml:"network"`
 }
 
-type CPU struct {
-	Thread int  `yaml:"thread"`
-	Nested bool `yaml:"nested"`
+type Cpu struct {
+	Thread         int  `yaml:"thread"`
+	Reserve        int  `yaml:"reserve"`
+	Maximum        int  `yaml:"maximum"`
+	RelativeWeight int  `yaml:"relative-weight"`
+	Nested         bool `yaml:"nested"`
 }
 
 type Memory struct {
-	Size    int  `yaml:"size"`
-	Dynamic bool `yaml:"dynamic"`
+	Size    string `yaml:"size"`
+	Dynamic bool   `yaml:"dynamic"`
 }
 
 type Disk struct {
 	Path       string `yaml:"path"`
-	Size       string    `yaml:"size,omitempty"`
+	Size       string `yaml:"size,omitempty"`
 	Type       string `yaml:"type"`
 	ParentPath string `yaml:"parent-path,omitempty"`
-	SourceDisk int `yaml:"source-disk,omitempty"`
+	SourceDisk int    `yaml:"source-disk,omitempty"`
 	Import     bool   `yaml:"import,omitempty"`
 }
 

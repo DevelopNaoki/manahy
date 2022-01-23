@@ -20,9 +20,8 @@ var diskList = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print("Storage\n")
 		diskList := process.GetDiskList()
-		for _, l := range diskList {
-			diskSize, sizeUnit := process.GetDiskSize(l)
-			fmt.Printf("- %s: %s: %.2f %s\n", process.GetDiskId(l), l, diskSize, sizeUnit)
+		for i, _ := range diskList.Size {
+			fmt.Printf("- %s: %s: %.2f %s\n", diskList.Number[i], diskList.FriendlyName[i], diskList.Size[i], diskList.SizeUnit[i])
 		}
 		fmt.Print("\n")
 	},

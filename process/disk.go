@@ -6,43 +6,34 @@ import (
 	"strconv"
 )
 
-func GetDiskList() (list []string) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-Disk | Format-Table FriendlyName")
-	res, err := cmd.Output()
-	if err != nil {
-		panic(err)
-	}
-
-	list = listingOfExecuteResults(res, "FriendlyName")
-	return
+type DiskList struct {
+	Number       []string
+	FriendlyName []string
+	Size         []float32
+	SizeUnit     []string
 }
 
-func GetDiskId(diskName string) (diskId string) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-Disk | where {$_.FriendlyName -eq '"+diskName+"'} | Format-Table Number")
-	res, err := cmd.Output()
-	if err != nil {
-		panic(err)
-	}
-
-	id := listingOfExecuteResults(res, "Number")
-	if len(id) == 1 {
-		diskId = id[0]
+func GetDiskList() (diskList DiskList) {
+	diskList.Number = GetDIskListInfo("Number")
+	diskList.FriendlyName = GetDIskListInfo("FriendlyName")
+	diskSize := GetDIskListInfo("Size")
+	for i, _ := range diskSize {
+		sizeInt, _ := strconv.Atoi(diskSize[i])
+		diskSizeFloat, diskSizeUnit := computCapacity(sizeInt)
+		diskList.Size = append(diskList.Size, diskSizeFloat)
+		diskList.SizeUnit = append(diskList.SizeUnit, diskSizeUnit)
 	}
 	return
 }
 
-func GetDiskSize(diskName string) (diskSize float32, sizeUnit string) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-Disk | where {$_.FriendlyName -eq '"+diskName+"'} | Format-Table Size")
+func GetDIskListInfo(parameter string) (list []string) {
+	cmd := exec.Command("powershell", "-NoProfile", "$res = Get-Disk; echo $res | Format-Table "+parameter)
 	res, err := cmd.Output()
 	if err != nil {
 		panic(err)
 	}
 
-	size := listingOfExecuteResults(res, "Size")
-	if len(size) == 1 {
-		sizeInt, _ := strconv.Atoi(size[0])
-		diskSize, sizeUnit = computCapacity(sizeInt)
-	}
+	list = listingOfExecuteResults(res, parameter)
 	return
 }
 
@@ -53,12 +44,12 @@ func CreateDisk(newDisk Disk) {
 		fmt.Print("error: Disk is already exist\n")
 	} else {
 		switch newDisk.Type {
-			case "dynamic":
-				args = "New-VHD -Path '"+newDisk.Path+"' -SizeBytes "+newDisk.Size
-			case "fixed":
-				args = "New-VHD -Path "+newDisk.Path+" -SizeBytes "+newDisk.Size+" -SourceDisk "+strconv.Itoa(newDisk.SourceDisk)+" -Fixed"
-			case "differencing":
-				args = "New-VHD -ParentPath "+newDisk.ParentPath+" -Path "+newDisk.Path+" -Differencing"
+		case "dynamic":
+			args = "New-VHD -Path '" + newDisk.Path + "' -SizeBytes " + newDisk.Size
+		case "fixed":
+			args = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + newDisk.Size + " -SourceDisk " + strconv.Itoa(newDisk.SourceDisk) + " -Fixed"
+		case "differencing":
+			args = "New-VHD -ParentPath " + newDisk.ParentPath + " -Path " + newDisk.Path + " -Differencing"
 		}
 		cmd := exec.Command("powershell", "-NoProfile", args)
 		err := cmd.Run()

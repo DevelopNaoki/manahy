@@ -8,7 +8,17 @@ import (
 )
 
 func isFileExist(path string) (exist bool) {
-	cmd := exec.Command("powershell", "-NoProfile", "Test-Path $"+path+" -PathType Leaf")
+	cmd := exec.Command("powershell", "-NoProfile", "Test-Path "+path+" -PathType Leaf")
+	res, err := cmd.Output()
+	if err != nil {
+		panic(err)
+	}
+	exist, _ = strconv.ParseBool(string(res))
+	return
+}
+
+func isFolderExist(path string) (exist bool) {
+	cmd := exec.Command("powershell", "-NoProfile", "Test-Path "+path)
 	res, err := cmd.Output()
 	if err != nil {
 		panic(err)
@@ -31,6 +41,8 @@ func computCapacity(raw int) (processing float32, unit string) {
 			unit = "GB"
 		case "GB":
 			unit = "TB"
+		case "TB":
+			unit = "PB"
 		}
 	}
 	return
