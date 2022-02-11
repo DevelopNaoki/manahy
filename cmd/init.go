@@ -7,12 +7,12 @@ import (
 func init() {
 	cobra.OnInitialize()
 	RootCmd.AddCommand(
-		exitCodeList,
 		vmCmd,
 		switchCmd,
 		diskCmd,
 	)
 
+	// ---------------------------------- //
 	vmCmd.AddCommand(
 		vmList,
 		vmState,
@@ -27,9 +27,9 @@ func init() {
 	vmList.Flags().BoolVarP(&vmListOption.saved, "saved", "", false, "list save vm's")
 	vmList.Flags().BoolVarP(&vmListOption.all, "all", "", false, "list all vm's")
 
+	// ---------------------------------- //
 	switchCmd.AddCommand(
 		switchList,
-		switchType,
 		switchChangeCmd,
 		switchCreate,
 		switchRemove,
@@ -45,18 +45,20 @@ func init() {
 	switchCreate.Flags().StringVarP(&switchCreateOption.ExternameInterface, "extername-interface", "", "", "set extername interface")
 	switchCreate.Flags().BoolVarP(&switchCreateOption.AllowManagementOs, "allow-management-os", "", false, "set allow management os")
 
+	// ---------------------------------- //
 	switchChangeCmd.AddCommand(
 		switchChangeType,
 	)
 
+	// ---------------------------------- //
 	diskCmd.AddCommand(
 		diskList,
 		diskCreate,
 	)
 
 	diskCreate.Flags().StringVarP(&diskCreateOption.Path, "path", "", "", "set path")
-        diskCreate.Flags().StringVarP(&diskCreateOption.Size, "size", "", "", "set size")
-        diskCreate.Flags().StringVarP(&diskCreateOption.Type, "type", "", "dynamic", "set type")
-        diskCreate.Flags().StringVarP(&diskCreateOption.ParentPath, "parent-path", "", "", "set parent path")
-        diskCreate.Flags().IntVarP(&diskCreateOption.SourceDisk, "source-disk", "", 0, "set source disk")
+	diskCreate.Flags().StringVarP(&diskCreateOption.Size, "size", "", "", "set size")
+	diskCreate.Flags().StringVarP(&diskCreateOption.Type, "type", "", "dynamic", "set type")
+	diskCreate.Flags().StringVarP(&diskCreateOption.ParentPath, "parent-path", "", "", "set parent path")
+	diskCreate.Flags().IntVarP(&diskCreateOption.SourceDisk, "source-disk", "", 0, "set source disk")
 }

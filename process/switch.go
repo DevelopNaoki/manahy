@@ -38,7 +38,6 @@ func ChangeSwitchType(name string, switchType string) {
 	if err != nil {
 		panic(err)
 	}
-	return
 }
 
 func CreateSwitch(newSwitch Network) {
@@ -64,7 +63,6 @@ func CreateSwitch(newSwitch Network) {
 			panic(err)
 		}
 	}
-	return
 }
 
 func RemoveSwitch(name string) {
@@ -77,5 +75,4 @@ func RemoveSwitch(name string) {
 			panic(err)
 		}
 	}
-	return
 }

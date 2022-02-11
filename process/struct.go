@@ -45,3 +45,10 @@ type Network struct {
 	ExternameInterface string `yaml:"extername-interface,omitempty"`
 	AllowManagementOs  bool   `yaml:"allow-management-os,omitempty"`
 }
+
+type DiskList struct {
+	Number       []string
+	FriendlyName []string
+	Size         []float32
+	SizeUnit     []string
+}

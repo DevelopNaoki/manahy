@@ -1,9 +1,9 @@
 package process
 
 import (
+	"fmt"
 	"os/exec"
 	"strconv"
-	"fmt"
 )
 
 // GetVmList get a list of VMs
@@ -36,28 +36,27 @@ func SetVmProcessor(name string, cpu Cpu) {
 	var args string
 
 	if GetVmState(name) != "NotFound" {
-		args = "Set-VMProcessor "+name+" "
+		args = "Set-VMProcessor " + name + " "
 	}
 	if cpu.Thread > 0 {
-		args = args+"-Count "+strconv.Itoa(cpu.Thread)+" "
+		args = args + "-Count " + strconv.Itoa(cpu.Thread) + " "
 	}
 	if cpu.Reserve <= 100 && cpu.Reserve >= 0 {
-		args = args+" -Reserve "+strconv.Itoa(cpu.Reserve)+" "
+		args = args + " -Reserve " + strconv.Itoa(cpu.Reserve) + " "
 	}
 	if cpu.Maximum <= 100 && cpu.Maximum >= 0 {
-		args = args+" -Maximum "+strconv.Itoa(cpu.Maximum)+" "
+		args = args + " -Maximum " + strconv.Itoa(cpu.Maximum) + " "
 	}
 	if cpu.RelativeWeight <= 10000 && cpu.RelativeWeight > 0 {
-		args = args+" -RelativeWeight "+strconv.Itoa(cpu.RelativeWeight)+" "
+		args = args + " -RelativeWeight " + strconv.Itoa(cpu.RelativeWeight) + " "
 	}
-	args = args+" -ExposeVirtualizationExtensions "+strconv.FormatBool(cpu.Nested)
+	args = args + " -ExposeVirtualizationExtensions " + strconv.FormatBool(cpu.Nested)
 
 	err := exec.Command("powershell", "-NoProfile", args).Run()
 
 	if err != nil {
 		panic(err)
 	}
-	return
 }
 
 func SetVmMemory(name string, memory Memory) {
@@ -66,7 +65,7 @@ func SetVmMemory(name string, memory Memory) {
 
 func CreateVm(newVm Vm) {
 	if CheckVmOption(newVm) {
-		args := "New-VM -Name "+newVm.Name+" -Generation "+strconv.Itoa(newVm.Generation)+" -Path "+newVm.Path+" -MemoryStartupBytes "+newVm.Memory.Size
+		args := "New-VM -Name " + newVm.Name + " -Generation " + strconv.Itoa(newVm.Generation) + " -Path " + newVm.Path + " -MemoryStartupBytes " + newVm.Memory.Size
 		cmd := exec.Command("powershell", "-NoProfile", args)
 		err := cmd.Run()
 		if err != nil {
@@ -93,7 +92,7 @@ func CheckVmOption(newVm Vm) (passCheck bool) {
 		passCheck = false
 	} else {
 		for _, disk := range newVm.Disk {
-			if !IsFileExist(disk) {
+			if !isFileExist(disk) {
 				fmt.Print("error: " + disk + " does not exist\n")
 				passCheck = false
 			}

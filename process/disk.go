@@ -6,18 +6,11 @@ import (
 	"strconv"
 )
 
-type DiskList struct {
-	Number       []string
-	FriendlyName []string
-	Size         []float32
-	SizeUnit     []string
-}
-
 func GetDiskList() (diskList DiskList) {
 	diskList.Number = GetDIskListInfo("Number")
 	diskList.FriendlyName = GetDIskListInfo("FriendlyName")
 	diskSize := GetDIskListInfo("Size")
-	for i, _ := range diskSize {
+	for i := range diskSize {
 		sizeInt, _ := strconv.Atoi(diskSize[i])
 		diskSizeFloat, diskSizeUnit := computCapacity(sizeInt)
 		diskList.Size = append(diskList.Size, diskSizeFloat)

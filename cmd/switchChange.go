@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/DevelopNaoki/manahy/process"
 	"github.com/spf13/cobra"
@@ -11,9 +12,9 @@ var switchChangeCmd = &cobra.Command{
 	Use:   "change",
 	Short: "Change switch option",
 	Args:  cobra.RangeArgs(0, 1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		process.Error(1)
-		return nil
+	Run: func(cmd *cobra.Command, args []string) {
+		Error(1)
+		os.Exit(1)
 	},
 }
 
