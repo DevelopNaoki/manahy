@@ -2,6 +2,7 @@ package process
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"strconv"
 )
@@ -42,26 +43,18 @@ func ChangeSwitchType(name string, switchType string) {
 
 func CreateSwitch(newSwitch Network) {
 	var args string
+	CheckSwitchParam(newSwitch)
 
-	if GetSwitchType(newSwitch.Name) != "NotFound" {
-		fmt.Print("error: " + newSwitch.Name + " is already exist\n")
+	if newSwitch.Type == "external" {
+		args = "New-VMSwitch -name '" + newSwitch.Name + "' -NetAdapterName '" + newSwitch.ExternameInterface + "' -AllowManagementOS $" + strconv.FormatBool(newSwitch.AllowManagementOs)
 	} else {
-		if newSwitch.Type == "external" {
-			err := exec.Command("powershell", "-NoProfile", "Get-NetAdapter "+newSwitch.ExternameInterface)
-			if err != nil {
-				fmt.Print("error: " + newSwitch.ExternameInterface + " is not found\n")
-			} else {
-				args = "New-VMSwitch -name '" + newSwitch.Name + "' -NetAdapterName '" + newSwitch.ExternameInterface + "' -AllowManagementOS $" + strconv.FormatBool(newSwitch.AllowManagementOs)
-			}
-		} else if newSwitch.Type == "internal" || newSwitch.Type == "private" {
-			args = "New-VMSwitch -name '" + newSwitch.Name + "' -SwitchType " + newSwitch.Type
-		}
+		args = "New-VMSwitch -name '" + newSwitch.Name + "' -SwitchType " + newSwitch.Type
+	}
 
-		cmd := exec.Command("powershell", "-NoProfile", args)
-		err := cmd.Run()
-		if err != nil {
-			panic(err)
-		}
+	cmd := exec.Command("powershell", "-NoProfile", args)
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
 	}
 }
 
@@ -73,6 +66,24 @@ func RemoveSwitch(name string) {
 		err := cmd.Run()
 		if err != nil {
 			panic(err)
+		}
+	}
+}
+
+func CheckSwitchParam(newSwitch Network) {
+	if GetSwitchType(newSwitch.Name) != "NotFound" {
+		fmt.Print("error: " + newSwitch.Name + " is already exist\n")
+		os.Exit(1)
+	}
+	if newSwitch.Type != "external" && newSwitch.Type != "internal" && newSwitch.Type != "private" {
+		fmt.Print("error: undefined switch type \n")
+		os.Exit(1)
+	}
+	if newSwitch.Type == "external" {
+		err := exec.Command("powershell", "-NoProfile", "Get-NetAdapter "+newSwitch.ExternameInterface)
+		if err != nil {
+			fmt.Print("error: undefined interface\n")
+			os.Exit(1)
 		}
 	}
 }

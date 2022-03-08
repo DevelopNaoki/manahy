@@ -1,18 +1,18 @@
 package process
 
 type YamlFile struct {
-	Vms      map[string]Vm      `yaml:"vms"`
-	Disks    map[string]Disk    `yaml:"disks"`
-	Networks map[string]Network `yaml:"networks"`
+	Vms      map[string]Vm      `yaml:"vms" json:"vm"`
+	Disks    map[string]Disk    `yaml:"disks" json:"disk"`
+	Networks map[string]Network `yaml:"networks" json:"network"`
 }
 
 type Vm struct {
-	Name       string   `yaml:"name"`
-	Generation int      `yaml:"generation"`
-	Cpu        Cpu      `yaml:"cpu"`
-	Memory     Memory   `yaml:"memory"`
-	Path       string   `yaml:"path"`
-	Image      string   `yaml:"image,omitempty"`
+	Name       string   `yaml:"name" json:"name"`
+	Generation int      `yaml:"generation" json:"generation"`
+	Cpu        Cpu      `yaml:"cpu" json:"cpu"`
+	Memory     Memory   `yaml:"memory" json:"network"`
+	Path       string   `yaml:"path" json:"path"`
+	Image      string   `yaml:"image,omitempty" json:"image"`
 	Disk       []string `yaml:"disk"`
 	Network    []string `yaml:"network"`
 }
@@ -49,6 +49,6 @@ type Network struct {
 type DiskList struct {
 	Number       []string
 	FriendlyName []string
-	Size         []float32
+	Size         []float64
 	SizeUnit     []string
 }
