@@ -19,7 +19,7 @@ vms:
 disks:
   disk1:
     name: testdisk
-    size: 10
+    size: 10GB
     path: C:\test
   disk2:
     name: disk2
