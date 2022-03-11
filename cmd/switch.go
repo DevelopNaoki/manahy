@@ -21,11 +21,10 @@ var switchListOption struct {
 	private  bool
 	all      bool
 }
-
 var switchList = &cobra.Command{
 	Use:   "list",
 	Short: "Print switch list",
-	Args:  cobra.RangeArgs(0, 1),
+	Args:  cobra.RangeArgs(0, 0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if switchListOption.external || switchListOption.internal || switchListOption.private {
 			switchListOption.all = false
@@ -62,12 +61,11 @@ var switchList = &cobra.Command{
 	},
 }
 
-
 var switchCreateOption process.Network
 var switchCreate = &cobra.Command{
 	Use:   "create",
 	Short: "Create switch",
-	Args:  cobra.RangeArgs(0, 1),
+	Args:  cobra.RangeArgs(0, 0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if switchCreateOption.Name == "" || switchCreateOption.Type == "" {
 			fmt.Print("error: Please specify switch name and switch type\n")
@@ -84,10 +82,24 @@ var switchCreate = &cobra.Command{
 var switchRemove = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove switch",
-	Args:  cobra.RangeArgs(0, 1),
+	Args:  cobra.RangeArgs(1, 1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 1 {
-			process.RemoveSwitch(args[0])
+		process.RemoveSwitch(args[0])
+
+		return nil
+	},
+}
+
+var newSwitchName string
+var switchRename = &cobra.Command{
+	Use:   "rename",
+	Short: "Rename switch",
+	Args:  cobra.RangeArgs(1, 1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if newSwitchName == "" {
+			fmt.Print("error: need new switch name\n")
+		} else {
+			process.RenameSwitch(args[0], newSwitchName)
 		}
 
 		return nil

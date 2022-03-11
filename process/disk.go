@@ -10,8 +10,7 @@ import (
 )
 
 func GetDiskList() (diskList DiskList) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-Disk | Format-Table Number,FriendlyName,Size")
-	res, err := cmd.Output()
+	res, err := exec.Command("powershell", "-NoProfile", "Get-Disk | Format-Table Number,FriendlyName,Size").Output()
 	if err != nil {
 		panic(err)
 	}
@@ -37,23 +36,19 @@ func GetDiskList() (diskList DiskList) {
 }
 
 func CreateDisk(newDisk Disk) {
-	var args string
-	var diskSize string
+	var args, diskSize string
 	CheckDiskParam(newDisk)
 
 	switch newDisk.Type {
 	case "dynamic":
-		diskSize = reverseComputCapacity(newDisk.Size)
-		args = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + diskSize
+		args = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + newDisk.Size
 	case "fixed":
-                diskSize = reverseComputCapacity(newDisk.Size)
 		args = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + diskSize + " -SourceDisk " + strconv.Itoa(newDisk.SourceDisk) + " -Fixed"
 	case "differencing":
 		args = "New-VHD -ParentPath " + newDisk.ParentPath + " -Path " + newDisk.Path + " -Differencing"
 	}
 
-	cmd := exec.Command("powershell", "-NoProfile", args)
-	err := cmd.Run()
+	err := exec.Command("powershell", "-NoProfile", args).Run()
 	if err != nil {
 		panic(err)
 	}
@@ -70,6 +65,11 @@ func CheckDiskParam(newDisk Disk) {
 	}
 	if newDisk.Type == "differencing" && !isFileExist(newDisk.ParentPath) {
 		fmt.Print("error: Disk doesnot exist\n")
+		os.Exit(1)
+	}
+	diskSize := regexp.MustCompile("^[0-9]*[TGM]B$").FindString(newDisk.Size)
+	if diskSize == "" {
+		fmt.Print("error: undefined size\n")
 		os.Exit(1)
 	}
 }

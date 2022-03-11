@@ -8,12 +8,11 @@ import (
 )
 
 func isFileExist(path string) (exist bool) {
-	cmd := exec.Command("powershell", "-NoProfile", "Test-Path "+path+" -PathType Leaf")
-	res, err := cmd.Output()
+	res, err := exec.Command("powershell", "-NoProfile", "Test-Path "+path+" -PathType Leaf").Output()
 	if err != nil {
 		panic(err)
 	}
-	exist, _ = strconv.ParseBool(string(res))
+	exist, _ = strconv.ParseBool(strings.Replace(string(res), "\r\n", "", -1))
 	return
 }
 
@@ -48,25 +47,25 @@ func computCapacity(raw string) (processing float64, unit string) {
 	return
 }
 
-func reverseComputCapacity(size string) (raw string){
+func reverseComputCapacity(size string) (raw string) {
 	processing, _ := strconv.Atoi(regexp.MustCompile("^[0-9]+").FindString(size))
 	unit := regexp.MustCompile("^[0-9]+").ReplaceAllString(size, "")
 
 	for unit != "B" {
-                processing = processing * 1024
-                switch unit {
-                case "KB":
-                        unit = "B"
-                case "MB":
-                        unit = "KB"
-                case "GB":
-                        unit = "MB"
-                case "TB":
-                        unit = "GB"
-                case "PB":
-                        unit = "TB"
-                }
-        }
+		processing = processing * 1024
+		switch unit {
+		case "KB":
+			unit = "B"
+		case "MB":
+			unit = "KB"
+		case "GB":
+			unit = "MB"
+		case "TB":
+			unit = "GB"
+		case "PB":
+			unit = "TB"
+		}
+	}
 	raw = strconv.Itoa(processing)
 	return
 }

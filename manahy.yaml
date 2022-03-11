@@ -1,6 +1,7 @@
 vms:
-  vm1:
+  testVM:
     name: test
+    count: 1
     generation: 1
     memory:
       size: 1024
@@ -21,7 +22,7 @@ disks:
     name: testdisk
     size: 10GB
     path: C:\test
-  disk2:
+  testDisk:
     name: disk2
     import: true
     path: C:\test2
@@ -31,6 +32,6 @@ networks:
     type: external
     extername-interface: "Ethernet 1"
     allow-management-os: true
-  sww2:
+  testSW:
     name: internal
     type: internal

@@ -6,8 +6,13 @@ type YamlFile struct {
 	Networks map[string]Network `yaml:"networks" json:"network"`
 }
 
+type Host struct {
+	conputerName string `yaml:"conputer-name"`
+}
+
 type Vm struct {
 	Name       string   `yaml:"name" json:"name"`
+	Count      int      `yaml:"count",omitempty`
 	Generation int      `yaml:"generation" json:"generation"`
 	Cpu        Cpu      `yaml:"cpu" json:"cpu"`
 	Memory     Memory   `yaml:"memory" json:"network"`

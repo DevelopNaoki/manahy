@@ -3,20 +3,23 @@
 - [ ] build
 - [ ] remove
 - [ ] list
+
 #### disk
 - [x] list
 - [x] create
 - [ ] optimization
 - [ ] conversion
 - [ ] expansion
+
 #### switch
 - [x] list
 - [x] create
 - [x] remove
 - change
     - [x] type
-    - [ ] extraInterface
-- [ ] rename
+    - [x] externalInterface
+- [x] rename
+
 #### vm
 - [x] list
 - [x] state
@@ -24,6 +27,13 @@
 - [x] save
 - [x] shutdown
 - [x] destroy
+- [x] connect
 - [ ] create
-- [ ] remove
-- [ ] change
+- [x] remove
+- [x] rename
+- change
+    - [ ] processer
+    - [ ] memory
+    - [ ] disk
+    - [ ] network
+

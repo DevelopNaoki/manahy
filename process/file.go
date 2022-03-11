@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func ReadFile(name string) (data YamlFile) {
+func ReadYamlFile(name string) (data YamlFile) {
 	buf, err := ioutil.ReadFile(name)
 	if err != nil {
 		fmt.Print("error: faild read " + name + "\n")

@@ -9,8 +9,7 @@ import (
 
 // GetSwitchList get a list of Switch
 func GetSwitchList(state string) (list []string) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-VMSwitch * | where {$_.SwitchType -eq '"+state+"'} | Format-Table Name")
-	res, err := cmd.Output()
+	res, err := exec.Command("powershell", "-NoProfile", "Get-VMSwitch * | where {$_.SwitchType -eq '"+state+"'} | Format-Table Name").Output()
 	if err != nil {
 		panic(err)
 	}
@@ -20,8 +19,7 @@ func GetSwitchList(state string) (list []string) {
 
 // GetSwitchType get a Switch Type
 func GetSwitchType(name string) (state string) {
-	cmd := exec.Command("powershell", "-NoProfile", "Get-VMSwitch '"+name+"' | Format-Table SwitchType")
-	res, err := cmd.Output()
+	res, err := exec.Command("powershell", "-NoProfile", "Get-VMSwitch '"+name+"' | Format-Table SwitchType").Output()
 	if err != nil {
 		state = "NotFound"
 	} else {
@@ -34,8 +32,14 @@ func GetSwitchType(name string) (state string) {
 }
 
 func ChangeSwitchType(name string, switchType string) {
-	cmd := exec.Command("powershell", "-NoProfile", "Set-VMSwitch '"+name+"' -SwitchType "+switchType)
-	err := cmd.Run()
+		err := exec.Command("powershell", "-NoProfile", "Set-VMSwitch '"+name+"' -SwitchType "+switchType).Run()
+		if err != nil {
+			panic(err)
+		}
+}
+
+func ChangeSwitchNetAdapter(name string, netAdapter string) {
+	err := exec.Command("powershell", "-NoProfile", "Set-VMSwitch '"+name+"' -NetAdapterName '"+netAdapter+"'").Run()
 	if err != nil {
 		panic(err)
 	}
@@ -51,8 +55,7 @@ func CreateSwitch(newSwitch Network) {
 		args = "New-VMSwitch -name '" + newSwitch.Name + "' -SwitchType " + newSwitch.Type
 	}
 
-	cmd := exec.Command("powershell", "-NoProfile", args)
-	err := cmd.Run()
+	err := exec.Command("powershell", "-NoProfile", args).Run()
 	if err != nil {
 		panic(err)
 	}
@@ -62,8 +65,18 @@ func RemoveSwitch(name string) {
 	if GetSwitchType(name) == "NotFound" {
 		fmt.Print("error: " + name + " is not exist\n")
 	} else {
-		cmd := exec.Command("powershell", "-NoProfile", "Remove-VMSwitch '"+name+"' -Force")
-		err := cmd.Run()
+		err := exec.Command("powershell", "-NoProfile", "Remove-VMSwitch '"+name+"' -Force").Run()
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func RenameSwitch(name string, newName string) {
+	if GetSwitchType(name) == "NotFound" {
+		fmt.Print("error: " + name + " is not exist\n")
+	} else {
+		err := exec.Command("powershell", "-NoProfile", "Rename-VMSwitch '"+name+"' -NewName "+newName).Run()
 		if err != nil {
 			panic(err)
 		}
@@ -78,12 +91,12 @@ func CheckSwitchParam(newSwitch Network) {
 	if newSwitch.Type != "external" && newSwitch.Type != "internal" && newSwitch.Type != "private" {
 		fmt.Print("error: undefined switch type \n")
 		os.Exit(1)
-	}
-	if newSwitch.Type == "external" {
-		err := exec.Command("powershell", "-NoProfile", "Get-NetAdapter "+newSwitch.ExternameInterface)
-		if err != nil {
-			fmt.Print("error: undefined interface\n")
-			os.Exit(1)
-		}
-	}
+	} /*
+		if newSwitch.Type == "external" {
+			err := exec.Command("powershell", "-NoProfile", "Get-NetAdapter '"+newSwitch.ExternameInterface+"'").Run()
+			if err != nil {
+				fmt.Print("error: "+newSwitch.ExternameInterface+" undefined interface\n")
+				os.Exit(1)
+			}
+		}*/
 }
