@@ -2,18 +2,36 @@ package process
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
+	"regexp"
 	"strconv"
+	"strings"
 )
 
 // GetSwitchList get a list of Switch
-func GetSwitchList(state string) (list []string) {
-	res, err := exec.Command("powershell", "-NoProfile", "Get-VMSwitch * | where {$_.SwitchType -eq '"+state+"'} | Format-Table Name").Output()
+func GetSwitchLists() (switchList SwitchList) {
+	res, err := exec.Command("powershell", "-NoProfile", "Get-VMSwitch | Sort-Object SwitchType | Format-Table Name, SwitchType").Output()
 	if err != nil {
 		panic(err)
 	}
-	list = listingOfExecuteResults(res, "Name")
+	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
+	for i := range split {
+		split[i] = strings.TrimSpace(split[i])
+		if !strings.Contains(split[i], "Name") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
+			switchType := regexp.MustCompile("External$|Internal$|Private$").FindString(split[i])
+			split[i] = regexp.MustCompile("External$|Internal$|Private$").ReplaceAllString(split[i], "")
+			split[i] = strings.TrimSpace(split[i])
+
+			switch switchType {
+			case "External":
+				switchList.External = append(switchList.External, split[i])
+			case "Internal":
+				switchList.Internal = append(switchList.Internal, split[i])
+			case "Private":
+				switchList.Private = append(switchList.Private, split[i])
+			}
+		}
+	}
 	return
 }
 
@@ -32,10 +50,10 @@ func GetSwitchType(name string) (state string) {
 }
 
 func ChangeSwitchType(name string, switchType string) {
-		err := exec.Command("powershell", "-NoProfile", "Set-VMSwitch '"+name+"' -SwitchType "+switchType).Run()
-		if err != nil {
-			panic(err)
-		}
+	err := exec.Command("powershell", "-NoProfile", "Set-VMSwitch '"+name+"' -SwitchType "+switchType).Run()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func ChangeSwitchNetAdapter(name string, netAdapter string) {
@@ -81,22 +99,4 @@ func RenameSwitch(name string, newName string) {
 			panic(err)
 		}
 	}
-}
-
-func CheckSwitchParam(newSwitch Network) {
-	if GetSwitchType(newSwitch.Name) != "NotFound" {
-		fmt.Print("error: " + newSwitch.Name + " is already exist\n")
-		os.Exit(1)
-	}
-	if newSwitch.Type != "external" && newSwitch.Type != "internal" && newSwitch.Type != "private" {
-		fmt.Print("error: undefined switch type \n")
-		os.Exit(1)
-	} /*
-		if newSwitch.Type == "external" {
-			err := exec.Command("powershell", "-NoProfile", "Get-NetAdapter '"+newSwitch.ExternameInterface+"'").Run()
-			if err != nil {
-				fmt.Print("error: "+newSwitch.ExternameInterface+" undefined interface\n")
-				os.Exit(1)
-			}
-		}*/
 }

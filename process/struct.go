@@ -1,13 +1,13 @@
 package process
 
-type YamlFile struct {
+type Summarize struct {
 	Vms      map[string]Vm      `yaml:"vms" json:"vm"`
 	Disks    map[string]Disk    `yaml:"disks" json:"disk"`
 	Networks map[string]Network `yaml:"networks" json:"network"`
 }
 
 type Host struct {
-	conputerName string `yaml:"conputer-name"`
+	ConputerName string `yaml:"conputer-name"`
 }
 
 type Vm struct {
@@ -38,7 +38,7 @@ type Memory struct {
 type Disk struct {
 	Path       string `yaml:"path"`
 	Size       string `yaml:"size,omitempty"`
-	Type       string `yaml:"type"`
+	Type       string `yaml:"type,omitempty"`
 	ParentPath string `yaml:"parent-path,omitempty"`
 	SourceDisk int    `yaml:"source-disk,omitempty"`
 	Import     bool   `yaml:"import,omitempty"`
@@ -56,4 +56,10 @@ type DiskList struct {
 	FriendlyName []string
 	Size         []float64
 	SizeUnit     []string
+}
+
+type SwitchList struct {
+	External []string
+	Internal []string
+	Private  []string
 }

@@ -30,29 +30,28 @@ var switchList = &cobra.Command{
 			switchListOption.all = false
 		}
 
+		switchList := process.GetSwitchLists()
+
 		if switchListOption.external || switchListOption.all {
-			fmt.Print("External Switch's\n")
-			externalSwitchs := process.GetSwitchList("External")
-			for _, externamSwitch := range externalSwitchs {
-				fmt.Printf("- %s\n", externamSwitch)
+                        fmt.Print("External Switch's\n")
+			for i := range switchList.External {
+				fmt.Printf("- %s\n", switchList.External[i])
 			}
 			fmt.Print("\n")
 		}
 
 		if switchListOption.internal || switchListOption.all {
-			fmt.Print("Internal Switch's\n")
-			internalSwitchs := process.GetSwitchList("Internal")
-			for _, internalSwitch := range internalSwitchs {
-				fmt.Printf("- %s\n", internalSwitch)
+                        fmt.Print("Internal Switch's\n")
+			for i := range switchList.Internal {
+				fmt.Printf("- %s\n", switchList.Internal[i])
 			}
 			fmt.Print("\n")
 		}
 
 		if switchListOption.private || switchListOption.all {
-			fmt.Print("Private switch's\n")
-			privateSwitchs := process.GetSwitchList("Private")
-			for _, privateSwitch := range privateSwitchs {
-				fmt.Printf("- %s\n", privateSwitch)
+                        fmt.Print("Private switch's\n")
+			for i := range switchList.Private {
+				fmt.Printf("- %s\n", switchList.Private[i])
 			}
 			fmt.Print("\n")
 		}

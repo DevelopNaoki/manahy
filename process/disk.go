@@ -1,8 +1,6 @@
 package process
 
 import (
-	"fmt"
-	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -51,25 +49,5 @@ func CreateDisk(newDisk Disk) {
 	err := exec.Command("powershell", "-NoProfile", args).Run()
 	if err != nil {
 		panic(err)
-	}
-}
-
-func CheckDiskParam(newDisk Disk) {
-	if isFileExist(newDisk.Path) {
-		fmt.Print("error: Disk is already exist\n")
-		os.Exit(1)
-	}
-	if newDisk.Type != "dynamic" && newDisk.Type != "fixed" && newDisk.Type != "differencing" {
-		fmt.Print("error:  Undefined DiskType\n")
-		os.Exit(1)
-	}
-	if newDisk.Type == "differencing" && !isFileExist(newDisk.ParentPath) {
-		fmt.Print("error: Disk doesnot exist\n")
-		os.Exit(1)
-	}
-	diskSize := regexp.MustCompile("^[0-9]*[TGM]B$").FindString(newDisk.Size)
-	if diskSize == "" {
-		fmt.Print("error: undefined size\n")
-		os.Exit(1)
 	}
 }

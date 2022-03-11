@@ -59,8 +59,9 @@ func init() {
 		switchChangeNetAdapter,
 	)
 
-	switchChangeNetAdapter.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
+        switchChangeType.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
 
+	switchChangeNetAdapter.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
 	switchChangeNetAdapter.Flags().StringVarP(&netAdapter, "net-adapter", "n", "", "change network adapter")
 
 	// ---------------------------------- //

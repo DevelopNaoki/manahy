@@ -61,15 +61,15 @@ func SetVmMemory(name string) {
 }
 
 func CreateVm(newVm Vm) {
-	if CheckVmParam(newVm) {
-		args := "New-VM -Name " + newVm.Name + " -Generation " + strconv.Itoa(newVm.Generation) + " -Path " + newVm.Path + " -MemoryStartupBytes " + newVm.Memory.Size
-		cmd := exec.Command("powershell", "-NoProfile", args)
-		err := cmd.Run()
-		if err != nil {
-			panic(err)
-		}
-		SetVmProcessor(newVm.Name, newVm.Cpu)
+	CheckVmParam(newVm)
+
+	args := "New-VM -Name " + newVm.Name + " -Generation " + strconv.Itoa(newVm.Generation) + " -Path " + newVm.Path + " -MemoryStartupBytes " + newVm.Memory.Size
+	cmd := exec.Command("powershell", "-NoProfile", args)
+	err := cmd.Run()
+	if err != nil {
+		panic(err)
 	}
+	SetVmProcessor(newVm.Name, newVm.Cpu)
 }
 
 func RemoveVm(name string) {
@@ -85,47 +85,15 @@ func RemoveVm(name string) {
 
 func RenameVm(name string, newName string) {
 	if GetVmState(name) == "NotFound" {
-                fmt.Print("error: this vm does not exist\n")
+		fmt.Print("error: this vm does not exist\n")
 	} else if GetVmState(newName) != "NotFound" {
-                fmt.Print("error: New vm name already exist\n")
-        } else {
-                err := exec.Command("powershell", "-NoProfile", "Rename-VM -Name "+name+" -NewName "+newName).Run()
-                if err != nil {
-                        panic(err)
-                }
-        }
-}
-
-func CheckVmParam(newVm Vm) (passCheck bool) {
-	passCheck = true
-
-	if GetVmState(newVm.Name) != "NotFound" {
-		fmt.Print("error: " + newVm.Name + " is already existed\n")
-		passCheck = false
-	} else if newVm.Generation < 1 || newVm.Generation > 2 {
-		fmt.Print("error: Generation is not a valid value\n")
-		passCheck = false
-	} else if isFolderExist(newVm.Path) {
-		fmt.Print("error: " + newVm.Path + " is already exist\n")
-		passCheck = false
-	} else if newVm.Image != "" && !isFileExist(newVm.Image) {
-		fmt.Print("error: " + newVm.Image + " does not exist\n")
-		passCheck = false
+		fmt.Print("error: New vm name already exist\n")
 	} else {
-		for _, disk := range newVm.Disk {
-			if !isFileExist(disk) {
-				fmt.Print("error: " + disk + " does not exist\n")
-				passCheck = false
-			}
-		}
-		for _, network := range newVm.Network {
-			if GetSwitchType(network) == "NotFound" {
-				fmt.Print("error: " + network + " does not exist\n")
-				passCheck = false
-			}
+		err := exec.Command("powershell", "-NoProfile", "Rename-VM -Name "+name+" -NewName "+newName).Run()
+		if err != nil {
+			panic(err)
 		}
 	}
-	return
 }
 
 // -------------------- VM Operation --------------------
