@@ -51,21 +51,23 @@ func GetSwitchType(name string) (state string) {
 	return
 }
 
-func ChangeSwitchType(name string, switchType string) {
+func ChangeSwitchType(name string, switchType string) error {
 	err := exec.Command("powershell", "-NoProfile", "Set-VMSwitch '"+name+"' -SwitchType "+switchType).Run()
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func ChangeSwitchNetAdapter(name string, netAdapter string) {
+func ChangeSwitchNetAdapter(name string, netAdapter string) error {
 	err := exec.Command("powershell", "-NoProfile", "Set-VMSwitch '"+name+"' -NetAdapterName '"+netAdapter+"'").Run()
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func CreateSwitch(newSwitch Network) {
+func CreateSwitch(newSwitch Network) error {
 	var args string
 	CheckSwitchParam(newSwitch)
 
@@ -77,28 +79,31 @@ func CreateSwitch(newSwitch Network) {
 
 	err := exec.Command("powershell", "-NoProfile", args).Run()
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func RemoveSwitch(name string) {
+func RemoveSwitch(name string) error {
 	if GetSwitchType(name) == "NotFound" {
 		fmt.Print("error: " + name + " is not exist\n")
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Remove-VMSwitch '"+name+"' -Force").Run()
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
+	return nil
 }
 
-func RenameSwitch(name string, newName string) {
+func RenameSwitch(name string, newName string) error {
 	if GetSwitchType(name) == "NotFound" {
 		fmt.Print("error: " + name + " is not exist\n")
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Rename-VMSwitch '"+name+"' -NewName "+newName).Run()
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
+	return nil
 }

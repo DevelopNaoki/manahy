@@ -1,17 +1,16 @@
 package process
 
 import (
-	"fmt"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-func GetDiskList() (diskList DiskList) {
+func GetDiskList() (diskList DiskList, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "Get-Disk | Format-Table Number,FriendlyName,Size").Output()
 	if err != nil {
-		panic(err)
+		return diskList, err
 	}
 
 	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
@@ -23,7 +22,7 @@ func GetDiskList() (diskList DiskList) {
 
 			diskSize, diskSizeUnit, err := computCapacity(regexp.MustCompile("[0-9]+$").FindString(split[i]))
 			if err != nil {
-				panic(err)
+				return diskList, err
 			}
 			diskList.Size = append(diskList.Size, diskSize)
 			diskList.SizeUnit = append(diskList.SizeUnit, diskSizeUnit)
@@ -54,7 +53,7 @@ func CreateDisk(newDisk Disk) error {
 
 	err = exec.Command("powershell", "-NoProfile", args).Run()
 	if err != nil {
-		return fmt.Errorf("error: disk create error: %w", err)
+		return err
 	}
 	return nil
 }

@@ -10,8 +10,8 @@ import (
 var switchCmd = &cobra.Command{
 	Use:   "switch",
 	Short: "management switch on Hyper-V",
-	Run: func(cmd *cobra.Command, args []string) {
-		process.Error(1)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return fmt.Errorf("need valid command")
 	},
 }
 
@@ -25,14 +25,14 @@ var switchList = &cobra.Command{
 	Use:   "list",
 	Short: "Print switch list",
 	Args:  cobra.RangeArgs(0, 0),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		if switchListOption.external || switchListOption.internal || switchListOption.private {
 			switchListOption.all = false
 		}
 
 		switchList, err := process.GetSwitchList()
 		if err != nil {
-			return err
+			fmt.Print(err)
 		}
 
 		if switchListOption.external || switchListOption.all {
@@ -58,8 +58,6 @@ var switchList = &cobra.Command{
 			}
 			fmt.Print("\n")
 		}
-
-		return nil
 	},
 }
 
@@ -68,16 +66,17 @@ var switchCreate = &cobra.Command{
 	Use:   "create",
 	Short: "Create switch",
 	Args:  cobra.RangeArgs(0, 0),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		if switchCreateOption.Name == "" || switchCreateOption.Type == "" {
 			fmt.Print("error: Please specify switch name and switch type\n")
 		} else if switchCreateOption.Type == "external" && switchCreateOption.ExternameInterface == "" {
 			fmt.Print("error: Please specify an external interface\n")
 		} else {
-			process.CreateSwitch(switchCreateOption)
+			err := process.CreateSwitch(switchCreateOption)
+			if err != nil {
+				fmt.Print(err)
+			}
 		}
-
-		return nil
 	},
 }
 
@@ -85,10 +84,11 @@ var switchRemove = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove switch",
 	Args:  cobra.RangeArgs(1, 1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		process.RemoveSwitch(args[0])
-
-		return nil
+	Run: func(cmd *cobra.Command, args []string) {
+		err := process.RemoveSwitch(args[0])
+		if err != nil {
+			fmt.Print(err)
+		}
 	},
 }
 
@@ -97,13 +97,14 @@ var switchRename = &cobra.Command{
 	Use:   "rename",
 	Short: "Rename switch",
 	Args:  cobra.RangeArgs(1, 1),
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		if newSwitchName == "" {
 			fmt.Print("error: need new switch name\n")
 		} else {
-			process.RenameSwitch(args[0], newSwitchName)
+			err := process.RenameSwitch(args[0], newSwitchName)
+			if err != nil {
+				fmt.Print(err)
+			}
 		}
-
-		return nil
 	},
 }

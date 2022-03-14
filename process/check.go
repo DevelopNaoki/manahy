@@ -2,7 +2,6 @@ package process
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 )
 
@@ -41,48 +40,39 @@ func CheckSwitchParam(newSwitch Network) error {
 	return nil
 }
 
-func CheckVmParam(newVm Vm) {
+func CheckVmParam(newVm Vm) error {
 	if GetVmState(newVm.Name) != "NotFound" {
-		fmt.Print("error: " + newVm.Name + " is already existed\n")
-		os.Exit(1)
+		return fmt.Errorf("error: " + newVm.Name + " is already existed\n")
 	}
 	if newVm.Generation < 1 || newVm.Generation > 2 {
-		fmt.Print("error: Generation is not a valid value\n")
-		os.Exit(1)
+		return fmt.Errorf("error: Generation is not a valid value\n")
 	}
 	fileExist, err := isFileExist(newVm.Path)
 	if err != nil {
-		os.Exit(1)
+		return err
 	}
 	if fileExist {
-		fmt.Print("error: " + newVm.Path + " is already exist\n")
-		os.Exit(1)
+		return fmt.Errorf("error: " + newVm.Path + " is already exist\n")
 	}
 	fileExist, err = isFileExist(newVm.Image)
 	if err != nil {
-		os.Exit(1)
-	} else if newVm.Image != "" && !fileExist {
-		fmt.Print("error: " + newVm.Image + " does not exist\n")
-		os.Exit(1)
+		return err
 	}
-	return
+	return nil
 }
 
-func CheckVmProcessorParam(cpu Cpu) {
+func CheckVmProcessorParam(cpu Cpu) error {
 	if cpu.Thread < 0 {
-		fmt.Print("error: thread does not valid value\n")
-		os.Exit(1)
+		return fmt.Errorf("error: thread does not valid value\n")
 	}
 	if cpu.Reserve > 100 && cpu.Reserve < 0 {
-		fmt.Print("error: cpu reserve does not valid value\n")
-		os.Exit(1)
+		return fmt.Errorf("error: cpu reserve does not valid value\n")
 	}
 	if cpu.Maximum > 100 && cpu.Maximum < 0 {
-		fmt.Print("error: cpu maximum does not valid value\n")
-		os.Exit(1)
+		return fmt.Errorf("error: cpu maximum does not valid value\n")
 	}
 	if cpu.RelativeWeight > 10000 && cpu.RelativeWeight < 0 {
-		fmt.Print("error: cpu relative weight does not valid value\n")
-		os.Exit(1)
+		return fmt.Errorf("error: cpu relative weight does not valid value\n")
 	}
+	return nil
 }

@@ -30,7 +30,7 @@ func init() {
 	vmList.Flags().BoolVarP(&vmListOption.active, "active", "", true, "list active vm's")
 	vmList.Flags().BoolVarP(&vmListOption.inactive, "inactive", "i", false, "list inactive vm's")
 	vmList.Flags().BoolVarP(&vmListOption.saved, "saved", "s", false, "list save vm's")
-        vmList.Flags().BoolVarP(&vmListOption.paused, "paused", "p", false, "list pause vm's")
+	vmList.Flags().BoolVarP(&vmListOption.paused, "paused", "p", false, "list pause vm's")
 	vmList.Flags().BoolVarP(&vmListOption.all, "all", "a", false, "list all vm's")
 
 	vmRename.Flags().StringVarP(&newVmName, "new-name", "n", "", "new vm name")
