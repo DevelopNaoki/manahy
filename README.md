@@ -2,6 +2,8 @@
 manahy is management tool on hyper-v
 - Works only on Windows
 
+See implementedFeature.md for implemented features.
+
 ## Setup
 ```
 > go mod download
