@@ -20,7 +20,10 @@ func UnmarshalYaml(name string) (data Summarize) {
 }
 
 func loadFile(name string) []byte {
-	if !isFileExist(name) {
+	fileExist, e := isFileExist(name)
+	if e != nil {
+		os.Exit(1)
+	} else if !fileExist {
 		fmt.Print("error: this file does not exist\n")
 		os.Exit(1)
 	}

@@ -1,37 +1,42 @@
 package process
 
 import (
+	"fmt"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-func isFileExist(path string) (exist bool) {
-	res, err := exec.Command("powershell", "-NoProfile", "Test-Path "+path).Output()
-	if err != nil {
-		panic(err)
+func isFileExist(path string) (exist bool, err error) {
+	res, e := exec.Command("powershell", "-NoProfile", "Test-Path '"+path+"'").Output()
+	if e != nil {
+		return false, fmt.Errorf("error: failed execute 'Test-Path'")
 	}
 	exist, _ = strconv.ParseBool(strings.Replace(string(res), "\r\n", "", -1))
-	return
+	return exist, nil
 }
 
-func computCapacity(raw string) (processing float64, unit string) {
-	processing, _ = strconv.ParseFloat(raw, 64)
-	unit = "B"
-	for processing >= 1024 {
-		processing = processing / 1024
-		switch unit {
-		case "B":
-			unit = "KB"
-		case "KB":
-			unit = "MB"
-		case "MB":
-			unit = "GB"
-		case "GB":
-			unit = "TB"
-		case "TB":
-			unit = "PB"
+func computCapacity(raw string) (processing float64, unit string, err error) {
+	processing, err = strconv.ParseFloat(raw, 64)
+	if err != nil {
+		return 0, "", fmt.Errorf("error: in type conversion")
+	} else {
+		unit = "B"
+		for processing >= 1024 {
+			processing = processing / 1024
+			switch unit {
+			case "B":
+				unit = "KB"
+			case "KB":
+				unit = "MB"
+			case "MB":
+				unit = "GB"
+			case "GB":
+				unit = "TB"
+			case "TB":
+				unit = "PB"
+			}
 		}
 	}
 	return

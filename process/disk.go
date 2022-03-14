@@ -1,6 +1,7 @@
 package process
 
 import (
+	"fmt"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -20,7 +21,10 @@ func GetDiskList() (diskList DiskList) {
 			diskList.Number = append(diskList.Number, regexp.MustCompile("^[0-9]+").FindString(split[i]))
 			split[i] = regexp.MustCompile("^[0-9]+").ReplaceAllString(split[i], "")
 
-			diskSize, diskSizeUnit := computCapacity(regexp.MustCompile("[0-9]+$").FindString(split[i]))
+			diskSize, diskSizeUnit, err := computCapacity(regexp.MustCompile("[0-9]+$").FindString(split[i]))
+			if err != nil {
+				panic(err)
+			}
 			diskList.Size = append(diskList.Size, diskSize)
 			diskList.SizeUnit = append(diskList.SizeUnit, diskSizeUnit)
 			split[i] = regexp.MustCompile("[0-9]+$").ReplaceAllString(split[i], "")
@@ -29,14 +33,16 @@ func GetDiskList() (diskList DiskList) {
 			diskList.FriendlyName = append(diskList.FriendlyName, split[i])
 		}
 	}
-
 	return
 }
 
-func CreateDisk(newDisk Disk) {
+func CreateDisk(newDisk Disk) error {
 	var args, diskSize string
-	CheckDiskParam(newDisk)
+	err := CheckDiskParam(newDisk)
 
+	if err != nil {
+		return err
+	}
 	switch newDisk.Type {
 	case "dynamic":
 		args = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + newDisk.Size
@@ -46,8 +52,9 @@ func CreateDisk(newDisk Disk) {
 		args = "New-VHD -ParentPath " + newDisk.ParentPath + " -Path " + newDisk.Path + " -Differencing"
 	}
 
-	err := exec.Command("powershell", "-NoProfile", args).Run()
+	err = exec.Command("powershell", "-NoProfile", args).Run()
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("error: disk create error: %w", err)
 	}
+	return nil
 }

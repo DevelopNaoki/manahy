@@ -3,16 +3,39 @@ package process
 import (
 	"fmt"
 	"os/exec"
+	"regexp"
 	"strconv"
+	"strings"
 )
 
 // GetVmList get a list of VMs
-func GetVmList(state string) (list []string) {
-	res, err := exec.Command("powershell", "-NoProfile", "Get-VM | where {$_.State -eq '"+state+"'} | Format-Table Name").Output()
-	if err != nil {
-		panic(err)
+func GetVmList() (vmList VmList, err error) {
+	res, e := exec.Command("powershell", "-NoProfile", "Get-VM | Sort-Object State | Format-Table Name, State").Output()
+	if e != nil {
+		return vmList, e
 	}
-	list = listingOfExecuteResults(res, "Name")
+	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
+	for i := range split {
+		split[i] = strings.TrimSpace(split[i])
+		if !strings.Contains(split[i], "Name") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
+			state := regexp.MustCompile("Running$|Saved$|Off$|Paused$").FindString(split[i])
+			split[i] = regexp.MustCompile("Running$|Saved$|Off$|Paused$").ReplaceAllString(split[i], "")
+			split[i] = strings.TrimSpace(split[i])
+
+			switch state {
+			case "Running":
+				vmList.Running = append(vmList.Running, split[i])
+			case "Saved":
+				vmList.Saved = append(vmList.Saved, split[i])
+			case "Off":
+				vmList.Off = append(vmList.Off, split[i])
+			case "Paused":
+				vmList.Paused = append(vmList.Paused, split[i])
+			default:
+				return vmList, fmt.Errorf("Unknown error for vm list")
+			}
+		}
+	}
 	return
 }
 
@@ -132,6 +155,20 @@ func DestroyVm(name string) {
 // SaveVm save VM
 func SaveVm(name string) {
 	err := exec.Command("powershell", "-NoProfile", "Save-VM -Name '"+name+"'").Run()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func SuspendVm(name string) {
+	err := exec.Command("powershell", "-NoProfile", "Suspend-VM -Name '"+name+"'").Run()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func RestartVm(name string) {
+	err := exec.Command("powershell", "-NoProfile", "Restart-VM -Name '"+name+"' -Force").Run()
 	if err != nil {
 		panic(err)
 	}

@@ -63,3 +63,10 @@ type SwitchList struct {
 	Internal []string
 	Private  []string
 }
+
+type VmList struct {
+	Running []string
+	Saved   []string
+	Paused  []string
+	Off     []string
+}

@@ -20,6 +20,8 @@ func init() {
 		vmStart,
 		vmShutdown,
 		vmDestroy,
+		vmSuspend,
+		vmRestart,
 		vmConnect,
 		vmRemove,
 		vmRename,
@@ -28,6 +30,7 @@ func init() {
 	vmList.Flags().BoolVarP(&vmListOption.active, "active", "", true, "list active vm's")
 	vmList.Flags().BoolVarP(&vmListOption.inactive, "inactive", "i", false, "list inactive vm's")
 	vmList.Flags().BoolVarP(&vmListOption.saved, "saved", "s", false, "list save vm's")
+        vmList.Flags().BoolVarP(&vmListOption.paused, "paused", "p", false, "list pause vm's")
 	vmList.Flags().BoolVarP(&vmListOption.all, "all", "a", false, "list all vm's")
 
 	vmRename.Flags().StringVarP(&newVmName, "new-name", "n", "", "new vm name")
@@ -59,7 +62,7 @@ func init() {
 		switchChangeNetAdapter,
 	)
 
-        switchChangeType.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
+	switchChangeType.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
 
 	switchChangeNetAdapter.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
 	switchChangeNetAdapter.Flags().StringVarP(&netAdapter, "net-adapter", "n", "", "change network adapter")

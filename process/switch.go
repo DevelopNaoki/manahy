@@ -9,10 +9,10 @@ import (
 )
 
 // GetSwitchList get a list of Switch
-func GetSwitchLists() (switchList SwitchList) {
-	res, err := exec.Command("powershell", "-NoProfile", "Get-VMSwitch | Sort-Object SwitchType | Format-Table Name, SwitchType").Output()
-	if err != nil {
-		panic(err)
+func GetSwitchList() (switchList SwitchList, err error) {
+	res, e := exec.Command("powershell", "-NoProfile", "Get-VMSwitch | Sort-Object SwitchType | Format-Table Name, SwitchType").Output()
+	if e != nil {
+		return switchList, e
 	}
 	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
 	for i := range split {
@@ -29,6 +29,8 @@ func GetSwitchLists() (switchList SwitchList) {
 				switchList.Internal = append(switchList.Internal, split[i])
 			case "Private":
 				switchList.Private = append(switchList.Private, split[i])
+			default:
+				return switchList, fmt.Errorf("Unknown error for switch list")
 			}
 		}
 	}

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"os"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -9,8 +9,7 @@ import (
 var RootCmd = &cobra.Command{
 	Use:   "manahy",
 	Short: "manahy is management tool on Hyper-V",
-	Run: func(cmd *cobra.Command, args []string) {
-		Error(1)
-		os.Exit(1)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return fmt.Errorf("need valid command")
 	},
 }

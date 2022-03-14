@@ -36,4 +36,8 @@
     - [ ] memory
     - [ ] disk
     - [ ] network
+- checkpoint
+    - [ ] list
+    - [ ] create
+    - [ ] remove
 

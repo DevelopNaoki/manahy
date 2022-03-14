@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/DevelopNaoki/manahy/process"
 	"github.com/spf13/cobra"
@@ -11,9 +10,8 @@ import (
 var diskCmd = &cobra.Command{
 	Use:   "disk",
 	Short: "disk is management virtual disk",
-	Run: func(cmd *cobra.Command, args []string) {
-		Error(1)
-		os.Exit(1)
+	RunE: func(cmd *cobra.Command, args []string) error {
+                return fmt.Errorf("need valid command")
 	},
 }
 
@@ -38,6 +36,10 @@ var diskCreate = &cobra.Command{
 	Short: "Create virtual disk",
 	Args:  cobra.RangeArgs(0, 0),
 	Run: func(cmd *cobra.Command, args []string) {
-		process.CreateDisk(diskCreateOption)
+		err := process.CreateDisk(diskCreateOption)
+		if err != nil {
+			fmt.Print(err)
+		}
+		return
 	},
 }

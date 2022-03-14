@@ -19,6 +19,7 @@ var vmListOption struct {
 	active   bool
 	saved    bool
 	inactive bool
+	paused   bool
 	all      bool
 }
 
@@ -27,33 +28,44 @@ var vmList = &cobra.Command{
 	Short: "Print VM list",
 	Args:  cobra.RangeArgs(0, 0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if vmListOption.saved || vmListOption.inactive || vmListOption.all {
+		if vmListOption.saved || vmListOption.inactive || vmListOption.paused || vmListOption.all {
 			vmListOption.active = false
 		}
 
+		vmList, err := process.GetVmList()
+
+		if err != nil {
+			return err
+		}
+
 		if vmListOption.active || vmListOption.all {
-			activeVms := process.GetVmList("Running")
-                        fmt.Print("Running VM's\n")
-			for i := range activeVms {
-				fmt.Printf("- %s\n", activeVms[i])
+			fmt.Print("Running VM's\n")
+			for i := range vmList.Running {
+				fmt.Printf("- %s\n", vmList.Running[i])
 			}
 			fmt.Print("\n")
 		}
 
 		if vmListOption.saved || vmListOption.all {
-			savedVms := process.GetVmList("Saved")
-                        fmt.Print("Saved VM's\n")
-			for i := range savedVms {
-				fmt.Printf("- %s\n", savedVms[i])
+			fmt.Print("Saved VM's\n")
+			for i := range vmList.Saved {
+				fmt.Printf("- %s\n", vmList.Saved[i])
 			}
 			fmt.Print("\n")
 		}
 
+		if vmListOption.paused || vmListOption.all {
+                        fmt.Print("Paused VM's\n")
+                        for i := range vmList.Paused {
+                                fmt.Printf("- %s\n", vmList.Paused[i])
+                        }
+                        fmt.Print("\n")
+                }
+
 		if vmListOption.inactive || vmListOption.all {
-			inactiveVms := process.GetVmList("Off")
-                        fmt.Print("Inactive VM's\n")
-			for i := range inactiveVms {
-				fmt.Printf("- %s\n", inactiveVms[i])
+			fmt.Print("Inactive VM's\n")
+			for i := range vmList.Off {
+				fmt.Printf("- %s\n", vmList.Off[i])
 			}
 			fmt.Print("\n")
 		}
@@ -123,6 +135,32 @@ var vmDestroy = &cobra.Command{
 
 		return nil
 	},
+}
+
+var vmSuspend = &cobra.Command{
+        Use:   "suspend",
+        Short: "suspend VM",
+        Args:  cobra.RangeArgs(1, 1),
+        RunE: func(cmd *cobra.Command, args []string) error {
+                if process.GetVmState(args[0]) == "Running" {
+                        process.SuspendVm(args[0])
+                }
+
+                return nil
+        },
+}
+
+var vmRestart = &cobra.Command{
+        Use:   "restart",
+        Short: "restart VM",
+        Args:  cobra.RangeArgs(1, 1),
+        RunE: func(cmd *cobra.Command, args []string) error {
+                if process.GetVmState(args[0]) == "Running" {
+                        process.RestartVm(args[0])
+                }
+
+                return nil
+        },
 }
 
 var vmConnect = &cobra.Command{
