@@ -9,6 +9,10 @@ See implementedFeature.md for implemented features.
 > go mod download
 > go build
 ```
+if you usse not ASCII code, execute setup.bat
+```
+>.\setup.bat
+```
 
 ## Usage
 ```
