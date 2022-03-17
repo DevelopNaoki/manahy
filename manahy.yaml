@@ -19,13 +19,12 @@ vms:
     - internal
 disks:
   disk1:
-    name: testdisk
     size: 10GB
-    path: C:\test
+    type: dynamic
+    path: test.vhd
   testDisk:
-    name: disk2
     import: true
-    path: C:\test2
+    path: C:\test2.vhd
 networks:
   sw1:
     name: ex1

@@ -10,6 +10,8 @@ func init() {
 		vmCmd,
 		switchCmd,
 		diskCmd,
+		storageCmd,
+		build,
 	)
 
 	// ---------------------------------- //
@@ -69,7 +71,6 @@ func init() {
 
 	// ---------------------------------- //
 	diskCmd.AddCommand(
-		diskList,
 		diskCreate,
 	)
 
@@ -78,4 +79,8 @@ func init() {
 	diskCreate.Flags().StringVarP(&diskCreateOption.Type, "type", "t", "dynamic", "set type")
 	diskCreate.Flags().StringVarP(&diskCreateOption.ParentPath, "parent-path", "", "", "set parent path")
 	diskCreate.Flags().IntVarP(&diskCreateOption.SourceDisk, "source-disk", "", 0, "set source disk")
+
+	storageCmd.AddCommand(
+		storageList,
+	)
 }

@@ -10,9 +10,9 @@ import (
 
 // GetVmList get a list of VMs
 func GetVmList() (vmList VmList, err error) {
-	res, e := exec.Command("powershell", "-NoProfile", "Get-VM | Sort-Object State | Format-Table Name, State").Output()
-	if e != nil {
-		return vmList, e
+	res, err := exec.Command("powershell", "-NoProfile", "Get-VM | Sort-Object State | Format-Table Name, State").Output()
+	if err != nil {
+		return vmList, err
 	}
 	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
 	for i := range split {
@@ -45,9 +45,9 @@ func GetVmState(name string) (state string) {
 	if err != nil {
 		state = "NotFound"
 	} else {
-		list := listingOfExecuteResults(res, "State")
-		if len(list) == 1 {
-			state = list[0]
+		vmState := listingOfExecuteResults(res, "State")
+		if len(vmState) == 1 {
+			state = vmState[0]
 		}
 	}
 	return

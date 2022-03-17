@@ -9,27 +9,9 @@ import (
 
 var diskCmd = &cobra.Command{
 	Use:   "disk",
-	Short: "disk is management virtual disk",
+	Short: "management virtual disk",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("need valid command")
-	},
-}
-
-var diskList = &cobra.Command{
-	Use:   "list",
-	Short: "listing all storage",
-	Args:  cobra.RangeArgs(0, 0),
-	Run: func(cmd *cobra.Command, args []string) {
-		diskList, err := process.GetDiskList()
-		if err != nil {
-			fmt.Print(err)
-		}
-		fmt.Print("Storage\n")
-		for i := range diskList.Number {
-			fmt.Printf("- %s: %s: %.2f %s\n", diskList.Number[i], diskList.FriendlyName[i], diskList.Size[i], diskList.SizeUnit[i])
-		}
-		fmt.Print("\n")
-		fmt.Print("More infomation, execute 'Get-Disk'\n")
 	},
 }
 

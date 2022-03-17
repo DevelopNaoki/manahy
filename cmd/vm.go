@@ -9,7 +9,7 @@ import (
 
 var vmCmd = &cobra.Command{
 	Use:   "vm",
-	Short: "vm is management vm on Hyper-V",
+	Short: "management vm on Hyper-V",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("need valid command")
 	},

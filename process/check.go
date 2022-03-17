@@ -9,10 +9,12 @@ func CheckDiskParam(newDisk Disk) error {
 	fileExist, err := isFileExist(newDisk.Path)
 	if err != nil {
 		return err
-	} else if fileExist {
-		return fmt.Errorf("error: Disk is already exist")
-	}
-	if !newDisk.Import {
+	} else if newDisk.Import && !fileExist {
+		return fmt.Errorf("error: %s does not exist", newDisk.Path)
+	} else {
+		if fileExist {
+			return fmt.Errorf("error: %s is already exist", newDisk.Path)
+		}
 		if newDisk.Type != "dynamic" && newDisk.Type != "fixed" && newDisk.Type != "differencing" {
 			return fmt.Errorf("error: Undefined disk type")
 		}
@@ -32,7 +34,7 @@ func CheckDiskParam(newDisk Disk) error {
 
 func CheckSwitchParam(newSwitch Network) error {
 	if GetSwitchType(newSwitch.Name) != "NotFound" {
-		return fmt.Errorf("error: %s is already exist", newSwitch.Name)
+		return fmt.Errorf("%s is already exist", newSwitch.Name)
 	}
 	if newSwitch.Type != "external" && newSwitch.Type != "internal" && newSwitch.Type != "private" {
 		return fmt.Errorf("error: undefined switch type \n")

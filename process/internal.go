@@ -36,6 +36,8 @@ func computCapacity(raw string) (processing float64, unit string, err error) {
 				unit = "TB"
 			case "TB":
 				unit = "PB"
+			default:
+				return 0, "", fmt.Errorf("error: %s is undefine", unit)
 			}
 		}
 	}

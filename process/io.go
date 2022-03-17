@@ -3,36 +3,35 @@ package process
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"gopkg.in/yaml.v2"
 )
 
-func UnmarshalYaml(name string) (data Summarize) {
-	buf := loadFile(name)
-
-	err := yaml.Unmarshal(buf, &data)
+func UnmarshalYaml(name string) (data Summarize, err error) {
+	buf, err := loadFile(name)
 	if err != nil {
-		panic(err)
+		return data, err
 	}
 
-	return
+	err = yaml.Unmarshal(buf, &data)
+	if err != nil {
+		return data, err
+	}
+
+	return data, nil
 }
 
-func loadFile(name string) []byte {
-	fileExist, e := isFileExist(name)
-	if e != nil {
-		os.Exit(1)
-	} else if !fileExist {
-		fmt.Print("error: this file does not exist\n")
-		os.Exit(1)
-	}
-
-	buf, err := ioutil.ReadFile(name)
+func loadFile(name string) (buf []byte, err error) {
+	fileExist, err := isFileExist(name)
 	if err != nil {
-		fmt.Print("error: faild read " + name + "\n")
-		os.Exit(1)
+		return nil, err
+	} else if !fileExist {
+		return nil, fmt.Errorf("error: this file does not exist\n")
 	}
 
-	return buf
+	buf, err = ioutil.ReadFile(name)
+	if err != nil {
+		return nil, fmt.Errorf("error: faild read %s\n", name)
+	}
+	return buf, nil
 }

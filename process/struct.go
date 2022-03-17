@@ -12,7 +12,7 @@ type Host struct {
 
 type Vm struct {
 	Name       string   `yaml:"name" json:"name"`
-	Count      int      `yaml:"count",omitempty`
+	Count      int      `yaml:"count,omitempty"`
 	Generation int      `yaml:"generation" json:"generation"`
 	Cpu        Cpu      `yaml:"cpu" json:"cpu"`
 	Memory     Memory   `yaml:"memory" json:"network"`
@@ -51,7 +51,7 @@ type Network struct {
 	AllowManagementOs  bool   `yaml:"allow-management-os,omitempty"`
 }
 
-type DiskList struct {
+type StorageList struct {
 	Number       []string
 	FriendlyName []string
 	Size         []float64

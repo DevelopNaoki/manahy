@@ -4,7 +4,7 @@ import "os/exec"
 
 // ConnectVm connect the VM
 func ConnectVm(name string) error {
-	err := exec.Command("powershell", "-NoProfile", "vmconnect localhost "+name).Run()
+	err := exec.Command("powershell", "-NoProfile", "vmconnect localhost '"+name+"'").Run()
 	if err != nil {
 		return err
 	}

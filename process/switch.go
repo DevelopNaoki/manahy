@@ -10,9 +10,9 @@ import (
 
 // GetSwitchList get a list of Switch
 func GetSwitchList() (switchList SwitchList, err error) {
-	res, e := exec.Command("powershell", "-NoProfile", "Get-VMSwitch | Sort-Object SwitchType | Format-Table Name, SwitchType").Output()
-	if e != nil {
-		return switchList, e
+	res, err := exec.Command("powershell", "-NoProfile", "Get-VMSwitch | Sort-Object SwitchType | Format-Table Name, SwitchType").Output()
+	if err != nil {
+		return switchList, fmt.Errorf("failed get vm switch list")
 	}
 	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
 	for i := range split {
@@ -34,7 +34,7 @@ func GetSwitchList() (switchList SwitchList, err error) {
 			}
 		}
 	}
-	return
+	return switchList, nil
 }
 
 // GetSwitchType get a Switch Type
@@ -43,12 +43,12 @@ func GetSwitchType(name string) (state string) {
 	if err != nil {
 		state = "NotFound"
 	} else {
-		list := listingOfExecuteResults(res, "SwitchType")
-		if len(list) == 1 {
-			state = list[0]
+		switchType := listingOfExecuteResults(res, "SwitchType")
+		if len(switchType) == 1 {
+			state = switchType[0]
 		}
 	}
-	return
+	return state
 }
 
 func ChangeSwitchType(name string, switchType string) error {
@@ -69,7 +69,10 @@ func ChangeSwitchNetAdapter(name string, netAdapter string) error {
 
 func CreateSwitch(newSwitch Network) error {
 	var args string
-	CheckSwitchParam(newSwitch)
+	err := CheckSwitchParam(newSwitch)
+	if err != nil {
+		return err
+	}
 
 	if newSwitch.Type == "external" {
 		args = "New-VMSwitch -name '" + newSwitch.Name + "' -NetAdapterName '" + newSwitch.ExternameInterface + "' -AllowManagementOS $" + strconv.FormatBool(newSwitch.AllowManagementOs)
@@ -77,9 +80,9 @@ func CreateSwitch(newSwitch Network) error {
 		args = "New-VMSwitch -name '" + newSwitch.Name + "' -SwitchType " + newSwitch.Type
 	}
 
-	err := exec.Command("powershell", "-NoProfile", args).Run()
+	err = exec.Command("powershell", "-NoProfile", args).Run()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed create new switch")
 	}
 	return nil
 }
