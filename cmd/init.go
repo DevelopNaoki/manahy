@@ -12,6 +12,7 @@ func init() {
 		diskCmd,
 		storageCmd,
 		build,
+		remove,
 	)
 
 	// ---------------------------------- //

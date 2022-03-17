@@ -89,7 +89,7 @@ func CreateSwitch(newSwitch Network) error {
 
 func RemoveSwitch(name string) error {
 	if GetSwitchType(name) == "NotFound" {
-		fmt.Print("error: " + name + " is not exist\n")
+		fmt.Print("error: " + name + " does not exist\n")
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Remove-VMSwitch '"+name+"' -Force").Run()
 		if err != nil {
@@ -101,7 +101,7 @@ func RemoveSwitch(name string) error {
 
 func RenameSwitch(name string, newName string) error {
 	if GetSwitchType(name) == "NotFound" {
-		fmt.Print("error: " + name + " is not exist\n")
+		fmt.Print("error: " + name + " does not exist\n")
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Rename-VMSwitch '"+name+"' -NewName "+newName).Run()
 		if err != nil {
