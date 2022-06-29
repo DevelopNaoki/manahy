@@ -1,4 +1,4 @@
-package process
+package modules
 
 type Summarize struct {
 	Vms      map[string]Vm      `yaml:"vms" json:"vm"`
