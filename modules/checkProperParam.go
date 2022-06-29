@@ -26,7 +26,7 @@ func CheckDiskParam(newDisk Disk) error {
 		}
 		diskSize := regexp.MustCompile("^[0-9]*[TGM]B$").FindString(newDisk.Size)
 		if diskSize == "" {
-			return fmt.Errorf("error: undefined size")
+			return fmt.Errorf("error: unknown size")
 		}
 	}
 	return nil
