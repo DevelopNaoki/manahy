@@ -32,7 +32,7 @@ func GetVmList() (vmList VmList, err error) {
 			case "Paused":
 				vmList.Paused = append(vmList.Paused, split[i])
 			default:
-				return vmList, fmt.Errorf("Unknown error for vm list")
+				return vmList, fmt.Errorf("Unknown status for vm list")
 			}
 		}
 	}
