@@ -24,7 +24,7 @@ func computCapacity(raw string) (processing float64, unit string, err error) {
 	} else {
 		unit = "B"
 		for processing >= 1024 {
-			processing = processing / 1024
+			processing = processing/1024
 			switch unit {
 			case "B":
 				unit = "KB"
