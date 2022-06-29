@@ -6,22 +6,22 @@ import (
 )
 
 func CheckDiskParam(newDisk Disk) error {
-	fileExist, err := isFileExist(newDisk.Path)
+	diskExist, err := isFileExist(newDisk.Path)
 	if err != nil {
 		return err
-	} else if newDisk.Import && !fileExist {
+	} else if !diskExist && newDisk.Import {
 		return fmt.Errorf("error: %s does not exist", newDisk.Path)
-	} else if fileExist {
+	} else if diskExist && !newDisk.Import {
 		return fmt.Errorf("error: %s is already exist", newDisk.Path)
 	} else {
 		switch newDsik.Type {
 		case "dynamic":
 		case "fixed":
 		case "differencing":
-			fileExist, err = isFileExist(newDisk.ParentPath)
-			if newDisk.Type == "differencing" && err != nil {
+			parentDiskExist, err := isFileExist(newDisk.ParentPath)
+			if err != nil {
 				return err
-			} else if newDisk.Type == "differencing" && !fileExist {
+			} else if !parentDiskExist {
 				return fmt.Errorf("error: Parent disk doesnot exist")
 			}
 		default:
@@ -57,16 +57,18 @@ func CheckVmParam(newVm Vm) error {
 	if newVm.Generation < 1 || newVm.Generation > 2 {
 		return fmt.Errorf("error: Generation is not a valid value\n")
 	}
-	fileExist, err := isFileExist(newVm.Path)
+	vmPathExist, err := isFileExist(newVm.Path)
 	if err != nil {
 		return err
 	}
-	if fileExist {
+	if vmPathExist {
 		return fmt.Errorf("error: " + newVm.Path + " is already exist\n")
 	}
-	fileExist, err = isFileExist(newVm.Image)
+	imagePathExist, err := isFileExist(newVm.Image)
 	if err != nil {
 		return err
+	} if !imagePathExist {
+		return fmt.Errorf("error: "+newVm.Image+" is doesnt exist\n")	
 	}
 	return nil
 }
