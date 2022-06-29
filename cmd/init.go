@@ -15,7 +15,7 @@ func init() {
 		remove,
 	)
 
-	// ---------------------------------- //
+	
 	vmCmd.AddCommand(
 		vmList,
 		vmState,
@@ -30,6 +30,7 @@ func init() {
 		vmRename,
 	)
 
+	
 	vmList.Flags().BoolVarP(&vmListOption.active, "active", "", true, "list active vm's")
 	vmList.Flags().BoolVarP(&vmListOption.inactive, "inactive", "i", false, "list inactive vm's")
 	vmList.Flags().BoolVarP(&vmListOption.saved, "saved", "s", false, "list save vm's")
@@ -38,7 +39,7 @@ func init() {
 
 	vmRename.Flags().StringVarP(&newVmName, "new-name", "n", "", "new vm name")
 
-	// ---------------------------------- //
+	
 	switchCmd.AddCommand(
 		switchList,
 		switchChangeCmd,
@@ -59,18 +60,17 @@ func init() {
 
 	switchRename.Flags().StringVarP(&newSwitchName, "new-name", "n", "", "rename switch")
 
-	// ---------------------------------- //
-	switchChangeCmd.AddCommand(
-		switchChangeType,
-		switchChangeNetAdapter,
+	
+	switchOptionCfgCmd.AddCommand(
+		switchOptionCfgType,
+		switchOptionCfgNetAdapter,
 	)
 
-	switchChangeType.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
+	switchOptionCfgType.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
 
-	switchChangeNetAdapter.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
-	switchChangeNetAdapter.Flags().StringVarP(&netAdapter, "net-adapter", "n", "", "change network adapter")
+	switchOptionCfgNetAdapter.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
+	switchOptionCfgNetAdapter.Flags().StringVarP(&netAdapter, "net-adapter", "n", "", "change network adapter")
 
-	// ---------------------------------- //
 	diskCmd.AddCommand(
 		diskCreate,
 	)
