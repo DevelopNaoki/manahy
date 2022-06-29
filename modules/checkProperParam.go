@@ -15,15 +15,20 @@ func CheckDiskParam(newDisk Disk) error {
 		if fileExist {
 			return fmt.Errorf("error: %s is already exist", newDisk.Path)
 		}
-		if newDisk.Type != "dynamic" && newDisk.Type != "fixed" && newDisk.Type != "differencing" {
+		switch newDsik.Type {
+		case "dynamic":
+		case "fixed":
+		case "differencing":
+			fileExist, err = isFileExist(newDisk.ParentPath)
+			if newDisk.Type == "differencing" && err != nil {
+				return err
+			} else if newDisk.Type == "differencing" && !fileExist {
+				return fmt.Errorf("error: Parent disk doesnot exist")
+		}
+		default:
 			return fmt.Errorf("error: Undefined disk type")
 		}
-		fileExist, err = isFileExist(newDisk.ParentPath)
-		if newDisk.Type == "differencing" && err != nil {
-			return err
-		} else if newDisk.Type == "differencing" && !fileExist {
-			return fmt.Errorf("error: Parent disk doesnot exist")
-		}
+		
 		diskSize := regexp.MustCompile("^[0-9]*[TGM]B$").FindString(newDisk.Size)
 		if diskSize == "" {
 			return fmt.Errorf("error: unknown size")
