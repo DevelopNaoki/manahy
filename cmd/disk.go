@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/DevelopNaoki/manahy/process"
+	"github.com/DevelopNaoki/manahy/modules"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +21,7 @@ var diskCreate = &cobra.Command{
 	Short: "Create virtual disk",
 	Args:  cobra.RangeArgs(0, 0),
 	Run: func(cmd *cobra.Command, args []string) {
-		err := process.CreateDisk(diskCreateOption)
+		err := modules.CreateDisk(diskCreateOption)
 		if err != nil {
 			fmt.Print(err)
 		}
