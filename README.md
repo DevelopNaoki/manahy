@@ -9,9 +9,9 @@ See implementedFeature.md for implemented features.
 > go mod download
 > go build
 ```
-if you use not ASCII code, execute setup.bat
+If you are using other codes instead of ASCII codes, please change the character code used in configCharCode.bat.
 ```
->.\setup.bat
+>.\configCharCode.bat
 ```
 
 ## Usage
