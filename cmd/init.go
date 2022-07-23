@@ -15,7 +15,6 @@ func init() {
 		remove,
 	)
 
-	
 	vmCmd.AddCommand(
 		vmList,
 		vmState,
@@ -30,7 +29,6 @@ func init() {
 		vmRename,
 	)
 
-	
 	vmList.Flags().BoolVarP(&vmListOption.active, "active", "", true, "list active vm's")
 	vmList.Flags().BoolVarP(&vmListOption.inactive, "inactive", "i", false, "list inactive vm's")
 	vmList.Flags().BoolVarP(&vmListOption.saved, "saved", "s", false, "list save vm's")
@@ -39,10 +37,9 @@ func init() {
 
 	vmRename.Flags().StringVarP(&newVmName, "new-name", "n", "", "new vm name")
 
-	
 	switchCmd.AddCommand(
 		switchList,
-		switchChangeCmd,
+		switchOptionCfgCmd,
 		switchCreate,
 		switchRemove,
 		switchRename,
@@ -60,7 +57,6 @@ func init() {
 
 	switchRename.Flags().StringVarP(&newSwitchName, "new-name", "n", "", "rename switch")
 
-	
 	switchOptionCfgCmd.AddCommand(
 		switchOptionCfgType,
 		switchOptionCfgNetAdapter,

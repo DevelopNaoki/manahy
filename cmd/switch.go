@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/DevelopNaoki/manahy/process"
+	"github.com/DevelopNaoki/manahy/modules"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +30,7 @@ var switchList = &cobra.Command{
 			switchListOption.all = false
 		}
 
-		switchList, err := process.GetSwitchList()
+		switchList, err := modules.GetSwitchList()
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -61,7 +61,7 @@ var switchList = &cobra.Command{
 	},
 }
 
-var switchCreateOption process.Network
+var switchCreateOption modules.Network
 var switchCreate = &cobra.Command{
 	Use:   "create",
 	Short: "Create switch",
@@ -72,7 +72,7 @@ var switchCreate = &cobra.Command{
 		} else if switchCreateOption.Type == "external" && switchCreateOption.ExternameInterface == "" {
 			fmt.Print("error: Please specify an external interface\n")
 		} else {
-			err := process.CreateSwitch(switchCreateOption)
+			err := modules.CreateSwitch(switchCreateOption)
 			if err != nil {
 				fmt.Print(err)
 			}
@@ -85,7 +85,7 @@ var switchRemove = &cobra.Command{
 	Short: "Remove switch",
 	Args:  cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		err := process.RemoveSwitch(args[0])
+		err := modules.RemoveSwitch(args[0])
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -101,7 +101,7 @@ var switchRename = &cobra.Command{
 		if newSwitchName == "" {
 			fmt.Print("error: need new switch name\n")
 		} else {
-			err := process.RenameSwitch(args[0], newSwitchName)
+			err := modules.RenameSwitch(args[0], newSwitchName)
 			if err != nil {
 				fmt.Print(err)
 			}
@@ -118,12 +118,12 @@ var switchOptionCfgCmd = &cobra.Command{
 }
 
 var switchType string
-var switchChangeOptionCfgType = &cobra.Command{
+var switchOptionCfgType = &cobra.Command{
 	Use:   "type",
 	Short: "Configure switch type",
 	Args:  cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		err := process.ChangeSwitchType(args[0], switchType)
+		err := modules.ChangeSwitchType(args[0], switchType)
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -136,7 +136,7 @@ var switchOptionCfgNetAdapter = &cobra.Command{
 	Short: "Configure network adapter",
 	Args:  cobra.RangeArgs(1, 1),
 	Run: func(cmd *cobra.Command, args []string) {
-		err := process.ChangeSwitchNetAdapter(args[0], netAdapter)
+		err := modules.ChangeSwitchNetAdapter(args[0], netAdapter)
 		if err != nil {
 			fmt.Print(err)
 		}

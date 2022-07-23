@@ -14,7 +14,7 @@ func CheckDiskParam(newDisk Disk) error {
 	} else if diskExist && !newDisk.Import {
 		return fmt.Errorf("error: %s is already exist", newDisk.Path)
 	} else {
-		switch newDsik.Type {
+		switch newDisk.Type {
 		case "dynamic":
 		case "fixed":
 		case "differencing":
@@ -27,7 +27,7 @@ func CheckDiskParam(newDisk Disk) error {
 		default:
 			return fmt.Errorf("error: Undefined disk type")
 		}
-		
+
 		diskSize := regexp.MustCompile("^[0-9]*[TGM]B$").FindString(newDisk.Size)
 		if diskSize == "" {
 			return fmt.Errorf("error: unknown size")
@@ -67,8 +67,8 @@ func CheckVmParam(newVm Vm) error {
 	imagePathExist, err := isFileExist(newVm.Image)
 	if err != nil {
 		return err
-	} if !imagePathExist {
-		return fmt.Errorf("error: "+newVm.Image+" is doesnt exist\n")	
+	} else if !imagePathExist {
+		return fmt.Errorf("error: " + newVm.Image + " is doesnt exist\n")
 	}
 	return nil
 }

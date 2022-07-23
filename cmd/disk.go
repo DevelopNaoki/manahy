@@ -15,7 +15,7 @@ var diskCmd = &cobra.Command{
 	},
 }
 
-var diskCreateOption process.Disk
+var diskCreateOption modules.Disk
 var diskCreate = &cobra.Command{
 	Use:   "create",
 	Short: "Create virtual disk",

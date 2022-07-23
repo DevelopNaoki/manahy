@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/DevelopNaoki/manahy/process"
+	"github.com/DevelopNaoki/manahy/modules"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +20,7 @@ var storageList = &cobra.Command{
 	Short: "listing all storage",
 	Args:  cobra.RangeArgs(0, 0),
 	Run: func(cmd *cobra.Command, args []string) {
-		storageList, err := process.GetStorageList()
+		storageList, err := modules.GetStorageList()
 		if err != nil {
 			fmt.Print(err)
 		}

@@ -114,9 +114,9 @@ func RemoveVm(name string) error {
 
 func RenameVm(name string, newName string) error {
 	if GetVmState(name) == "NotFound" {
-		fmt.Print("error: this vm does not exist\n")
+		return fmt.Errorf("error: this vm does not exist")
 	} else if GetVmState(newName) != "NotFound" {
-		fmt.Print("error: New vm name already exist\n")
+		return fmt.Errorf("error: New vm name already exist")
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Rename-VM -Name "+name+" -NewName "+newName).Run()
 		if err != nil {
@@ -128,61 +128,89 @@ func RenameVm(name string, newName string) error {
 
 // ConnectVm connect the VM
 func ConnectVm(name string) error {
-	err := exec.Command("powershell", "-NoProfile", "vmconnect localhost '"+name+"'").Run()
-	if err != nil {
-		return err
+	if GetVmState(name) == "Running" {
+		err := exec.Command("powershell", "-NoProfile", "vmconnect localhost '"+name+"'").Run()
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf(name + " is not running")
 	}
 	return nil
 }
 
 // StartVm start the VM
 func StartVm(name string) error {
-	err := exec.Command("powershell", "-NoProfile", "Start-VM '"+name+"'").Run()
-	if err != nil {
-		return err
+	if GetVmState(name) != "Running" {
+		err := exec.Command("powershell", "-NoProfile", "Start-VM '"+name+"'").Run()
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf(name + " is already running")
 	}
 	return nil
 }
 
 // StopVm stop the VM
 func StopVm(name string) error {
-	err := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '"+name+"'").Run()
-	if err != nil {
-		return err
+	if GetVmState(name) == "Running" {
+		err := exec.Command("powershell", "-NoProfile", "Stop-VM -Name '"+name+"'").Run()
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf(name + " is not running")
 	}
 	return nil
 }
 
 // DestroyVm force stop VM
 func DestroyVm(name string) error {
-	err := exec.Command("powershell", "-NoProfile", "Stop-VM -Force -Name '"+name+"'").Run()
-	if err != nil {
-		return err
+	if GetVmState(name) == "Running" {
+		err := exec.Command("powershell", "-NoProfile", "Stop-VM -Force -Name '"+name+"'").Run()
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf(name + " is not running")
 	}
 	return nil
 }
 
 // SaveVm save VM
 func SaveVm(name string) error {
-	err := exec.Command("powershell", "-NoProfile", "Save-VM -Name '"+name+"'").Run()
-	if err != nil {
-		return err
+	if GetVmState(name) == "Running" {
+		err := exec.Command("powershell", "-NoProfile", "Save-VM -Name '"+name+"'").Run()
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf(name + " is not running")
 	}
 	return nil
 }
 
 func SuspendVm(name string) error {
-	err := exec.Command("powershell", "-NoProfile", "Suspend-VM -Name '"+name+"'").Run()
-	if err != nil {
-		return err
+	if GetVmState(name) == "Running" {
+		err := exec.Command("powershell", "-NoProfile", "Suspend-VM -Name '"+name+"'").Run()
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf(name + " is not running")
 	}
 	return nil
 }
 
 func RestartVm(name string) error {
-	err := exec.Command("powershell", "-NoProfile", "Restart-VM -Name '"+name+"' -Force").Run()
-	if err != nil {
-		return err
+	if GetVmState(name) == "Running" {
+		err := exec.Command("powershell", "-NoProfile", "Restart-VM -Name '"+name+"' -Force").Run()
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf(name + "is not running")
 	}
 	return nil
 }
