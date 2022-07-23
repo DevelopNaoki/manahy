@@ -30,19 +30,19 @@ var vmList = &cobra.Command{
 		}
 
 		if vmListOption.active || vmListOption.all {
-			displayVmList(vmList.Running, "Running VM's")
+			displayList(vmList.Running, "Running VM's")
 		}
 
 		if vmListOption.saved || vmListOption.all {
-			displayVmList(vmList.Saved, "Saved VM's")
+			displayList(vmList.Saved, "Saved VM's")
 		}
 
 		if vmListOption.paused || vmListOption.all {
-			displayVmList(vmList.Paused, "Paused VM's")
+			displayList(vmList.Paused, "Paused VM's")
 		}
 
 		if vmListOption.inactive || vmListOption.all {
-			displayVmList(vmList.Off, "Inactive VM's")
+			displayList(vmList.Off, "Inactive VM's")
 		}
 
 		return nil
@@ -82,7 +82,6 @@ var vmRemove = &cobra.Command{
 	},
 }
 
-var newVmName string
 var vmRename = &cobra.Command{
 	Use:   "rename",
 	Short: "rename VM",

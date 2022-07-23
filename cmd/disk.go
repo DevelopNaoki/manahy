@@ -15,16 +15,15 @@ var diskCmd = &cobra.Command{
 	},
 }
 
-var diskCreateOption modules.Disk
 var diskCreate = &cobra.Command{
 	Use:   "create",
 	Short: "Create virtual disk",
 	Args:  cobra.RangeArgs(0, 0),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := modules.CreateDisk(diskCreateOption)
 		if err != nil {
-			fmt.Print(err)
+			return err
 		}
-		return
+		return nil
 	},
 }

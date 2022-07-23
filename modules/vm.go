@@ -3,9 +3,7 @@ package modules
 import (
 	"fmt"
 	"os/exec"
-	"regexp"
 	"strconv"
-	"strings"
 )
 
 // GetVmList get a list of VMs
@@ -14,29 +12,13 @@ func GetVmList() (vmList VmList, err error) {
 	if err != nil {
 		return vmList, err
 	}
-	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
-	for i := range split {
-		split[i] = strings.TrimSpace(split[i])
-		if !strings.Contains(split[i], "Name") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
-			state := regexp.MustCompile("Running$|Saved$|Off$|Paused$").FindString(split[i])
-			split[i] = regexp.MustCompile("Running$|Saved$|Off$|Paused$").ReplaceAllString(split[i], "")
-			split[i] = strings.TrimSpace(split[i])
 
-			switch state {
-			case "Running":
-				vmList.Running = append(vmList.Running, split[i])
-			case "Saved":
-				vmList.Saved = append(vmList.Saved, split[i])
-			case "Off":
-				vmList.Off = append(vmList.Off, split[i])
-			case "Paused":
-				vmList.Paused = append(vmList.Paused, split[i])
-			default:
-				return vmList, fmt.Errorf("Unknown status for vm list")
-			}
-		}
+	vmList, err = vmListingOfExecuteResults(res)
+	if err != nil {
+		return vmList, err
 	}
-	return
+
+	return vmList, nil
 }
 
 // GetVmState get a VM state
@@ -48,32 +30,34 @@ func GetVmState(name string) (state string) {
 		vmState := listingOfExecuteResults(res, "State")
 		if len(vmState) == 1 {
 			state = vmState[0]
+		} else {
+			state = "Unknown"
 		}
 	}
 	return
 }
 
 func SetVmProcessor(name string, cpu Cpu) error {
-	var args string
+	var cmd string
 
 	if GetVmState(name) != "NotFound" {
-		args = "Set-VMProcessor " + name + " "
+		cmd = "Set-VMProcessor " + name + " "
 	}
 	if cpu.Thread > 0 {
-		args = args + "-Count " + strconv.Itoa(cpu.Thread) + " "
+		cmd = cmd + "-Count " + strconv.Itoa(cpu.Thread) + " "
 	}
 	if cpu.Reserve <= 100 && cpu.Reserve >= 0 {
-		args = args + " -Reserve " + strconv.Itoa(cpu.Reserve) + " "
+		cmd = cmd + " -Reserve " + strconv.Itoa(cpu.Reserve) + " "
 	}
 	if cpu.Maximum <= 100 && cpu.Maximum >= 0 {
-		args = args + " -Maximum " + strconv.Itoa(cpu.Maximum) + " "
+		cmd = cmd + " -Maximum " + strconv.Itoa(cpu.Maximum) + " "
 	}
 	if cpu.RelativeWeight <= 10000 && cpu.RelativeWeight > 0 {
-		args = args + " -RelativeWeight " + strconv.Itoa(cpu.RelativeWeight) + " "
+		cmd = cmd + " -RelativeWeight " + strconv.Itoa(cpu.RelativeWeight) + " "
 	}
-	args = args + " -ExposeVirtualizationExtensions " + strconv.FormatBool(cpu.Nested)
+	cmd = cmd + " -ExposeVirtualizationExtensions " + strconv.FormatBool(cpu.Nested)
 
-	err := exec.Command("powershell", "-NoProfile", args).Run()
+	err := exec.Command("powershell", "-NoProfile", cmd).Run()
 
 	if err != nil {
 		return err
@@ -90,8 +74,8 @@ func CreateVm(newVm Vm) error {
 		return err
 	}
 
-	args := "New-VM -Name " + newVm.Name + " -Generation " + strconv.Itoa(newVm.Generation) + " -Path " + newVm.Path + " -MemoryStartupBytes " + newVm.Memory.Size
-	err = exec.Command("powershell", "-NoProfile", args).Run()
+	cmd := "New-VM -Name " + newVm.Name + " -Generation " + strconv.Itoa(newVm.Generation) + " -Path " + newVm.Path + " -MemoryStartupBytes " + newVm.Memory.Size
+	err = exec.Command("powershell", "-NoProfile", cmd).Run()
 	if err != nil {
 		return err
 	}
@@ -102,7 +86,7 @@ func CreateVm(newVm Vm) error {
 
 func RemoveVm(name string) error {
 	if GetVmState(name) == "NotFound" {
-		fmt.Print("error: this vm does not exist\n")
+		return fmt.Errorf("error: %s is not exist", name)
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Remove-VM -Name "+name+" -Force").Run()
 		if err != nil {
@@ -114,9 +98,9 @@ func RemoveVm(name string) error {
 
 func RenameVm(name string, newName string) error {
 	if GetVmState(name) == "NotFound" {
-		return fmt.Errorf("error: this vm does not exist")
+		return fmt.Errorf("error: %s is not exist", name)
 	} else if GetVmState(newName) != "NotFound" {
-		return fmt.Errorf("error: New vm name already exist")
+		return fmt.Errorf("error: %s is already exist", newName)
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Rename-VM -Name "+name+" -NewName "+newName).Run()
 		if err != nil {
@@ -134,7 +118,7 @@ func ConnectVm(name string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf(name + " is not running")
+		return fmt.Errorf("%s is not running", name)
 	}
 	return nil
 }
@@ -147,7 +131,7 @@ func StartVm(name string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf(name + " is already running")
+		return fmt.Errorf("%s is already running", name)
 	}
 	return nil
 }
@@ -160,7 +144,7 @@ func StopVm(name string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf(name + " is not running")
+		return fmt.Errorf("%s is not running", name)
 	}
 	return nil
 }
@@ -173,7 +157,7 @@ func DestroyVm(name string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf(name + " is not running")
+		return fmt.Errorf("%s is not running", name)
 	}
 	return nil
 }
@@ -186,7 +170,7 @@ func SaveVm(name string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf(name + " is not running")
+		return fmt.Errorf("%s is not running", name)
 	}
 	return nil
 }
@@ -198,7 +182,7 @@ func SuspendVm(name string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf(name + " is not running")
+		return fmt.Errorf("%s is not running", name)
 	}
 	return nil
 }
@@ -210,7 +194,7 @@ func RestartVm(name string) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf(name + "is not running")
+		return fmt.Errorf("%s is not running", name)
 	}
 	return nil
 }

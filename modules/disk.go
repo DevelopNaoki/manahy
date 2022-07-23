@@ -7,7 +7,7 @@ import (
 )
 
 func CreateDisk(newDisk Disk) error {
-	var args, diskSize string
+	var cmd, diskSize string
 	err := CheckDiskParam(newDisk)
 
 	if err != nil {
@@ -15,14 +15,14 @@ func CreateDisk(newDisk Disk) error {
 	}
 	switch newDisk.Type {
 	case "dynamic":
-		args = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + newDisk.Size
+		cmd = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + newDisk.Size
 	case "fixed":
-		args = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + diskSize + " -SourceDisk " + strconv.Itoa(newDisk.SourceDisk) + " -Fixed"
+		cmd = "New-VHD -Path " + newDisk.Path + " -SizeBytes " + diskSize + " -SourceDisk " + strconv.Itoa(newDisk.SourceDisk) + " -Fixed"
 	case "differencing":
-		args = "New-VHD -ParentPath " + newDisk.ParentPath + " -Path " + newDisk.Path + " -Differencing"
+		cmd = "New-VHD -ParentPath " + newDisk.ParentPath + " -Path " + newDisk.Path + " -Differencing"
 	}
 
-	err = exec.Command("powershell", "-NoProfile", args).Run()
+	err = exec.Command("powershell", "-NoProfile", cmd).Run()
 	if err != nil {
 		return err
 	}

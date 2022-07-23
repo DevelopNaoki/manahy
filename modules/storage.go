@@ -2,8 +2,6 @@ package modules
 
 import (
 	"os/exec"
-	"regexp"
-	"strings"
 )
 
 func GetStorageList() (storageList StorageList, err error) {
@@ -12,24 +10,10 @@ func GetStorageList() (storageList StorageList, err error) {
 		return storageList, err
 	}
 
-	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
-	for i := range split {
-		split[i] = strings.TrimSpace(split[i])
-		if !strings.Contains(split[i], "Number") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
-			storageList.Number = append(storageList.Number, regexp.MustCompile("^[0-9]+").FindString(split[i]))
-			split[i] = regexp.MustCompile("^[0-9]+").ReplaceAllString(split[i], "")
-
-			storageSize, storageSizeUnit, err := computCapacity(regexp.MustCompile("[0-9]+$").FindString(split[i]))
-			if err != nil {
-				return storageList, err
-			}
-			storageList.Size = append(storageList.Size, storageSize)
-			storageList.SizeUnit = append(storageList.SizeUnit, storageSizeUnit)
-			split[i] = regexp.MustCompile("[0-9]+$").ReplaceAllString(split[i], "")
-
-			split[i] = strings.TrimSpace(split[i])
-			storageList.FriendlyName = append(storageList.FriendlyName, split[i])
-		}
+	storageList, err = storageListingOfExecuteResults(res)
+	if err != nil {
+		return storageList, err
 	}
-	return
+
+	return storageList, nil
 }

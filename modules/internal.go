@@ -54,3 +54,76 @@ func listingOfExecuteResults(res []byte, flag string) (list []string) {
 	}
 	return
 }
+
+func vmListingOfExecuteResults(res []byte) (vmList VmList, err error) {
+	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
+	for i := range split {
+		split[i] = strings.TrimSpace(split[i])
+		if !strings.Contains(split[i], "Name") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
+			state := regexp.MustCompile("Running$|Saved$|Off$|Paused$").FindString(split[i])
+			split[i] = regexp.MustCompile("Running$|Saved$|Off$|Paused$").ReplaceAllString(split[i], "")
+			split[i] = strings.TrimSpace(split[i])
+
+			switch state {
+			case "Running":
+				vmList.Running = append(vmList.Running, split[i])
+			case "Saved":
+				vmList.Saved = append(vmList.Saved, split[i])
+			case "Off":
+				vmList.Off = append(vmList.Off, split[i])
+			case "Paused":
+				vmList.Paused = append(vmList.Paused, split[i])
+			default:
+				return vmList, fmt.Errorf("Unknown status for vm list")
+			}
+		}
+	}
+	return vmList, nil
+}
+
+func switchListingOfExecuteResults(res []byte) (switchList SwitchList, err error) {
+        split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
+        for i := range split {
+                split[i] = strings.TrimSpace(split[i])
+                if !strings.Contains(split[i], "Name") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
+                        switchType := regexp.MustCompile("External$|Internal$|Private$").FindString(split[i])
+                        split[i] = regexp.MustCompile("External$|Internal$|Private$").ReplaceAllString(split[i], "")
+                        split[i] = strings.TrimSpace(split[i])
+
+                        switch switchType {
+                        case "External":
+                                switchList.External = append(switchList.External, split[i])
+                        case "Internal":
+                                switchList.Internal = append(switchList.Internal, split[i])
+                        case "Private":
+                                switchList.Private = append(switchList.Private, split[i])
+                        default:
+                                return switchList, fmt.Errorf("Unknown error for switch list")
+                        }
+                }
+        }
+	return switchList, nil
+}
+
+func storageListingOfExecuteResults(res []byte) (storageList StorageList, err error) {
+	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
+	for i := range split {
+		split[i] = strings.TrimSpace(split[i])
+		if !strings.Contains(split[i], "Number") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
+			storageList.Number = append(storageList.Number, regexp.MustCompile("^[0-9]+").FindString(split[i]))
+			split[i] = regexp.MustCompile("^[0-9]+").ReplaceAllString(split[i], "")
+
+			storageSize, storageSizeUnit, err := computCapacity(regexp.MustCompile("[0-9]+$").FindString(split[i]))
+			if err != nil {
+				return storageList, err
+			}
+			storageList.Size = append(storageList.Size, storageSize)
+			storageList.SizeUnit = append(storageList.SizeUnit, storageSizeUnit)
+			split[i] = regexp.MustCompile("[0-9]+$").ReplaceAllString(split[i], "")
+
+			split[i] = strings.TrimSpace(split[i])
+			storageList.FriendlyName = append(storageList.FriendlyName, split[i])
+		}
+	}
+	return storageList, nil
+}

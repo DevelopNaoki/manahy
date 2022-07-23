@@ -14,7 +14,9 @@ func init() {
 		build,
 		remove,
 	)
+}
 
+func init() {
 	vmCmd.AddCommand(
 		vmList,
 		vmState,
@@ -36,7 +38,9 @@ func init() {
 	vmList.Flags().BoolVarP(&vmListOption.all, "all", "a", false, "list all vm's")
 
 	vmRename.Flags().StringVarP(&newVmName, "new-name", "n", "", "new vm name")
+}
 
+func init() {
 	switchCmd.AddCommand(
 		switchList,
 		switchOptionCfgCmd,
@@ -66,7 +70,9 @@ func init() {
 
 	switchOptionCfgNetAdapter.Flags().StringVarP(&switchType, "type", "t", "", "change switch type")
 	switchOptionCfgNetAdapter.Flags().StringVarP(&netAdapter, "net-adapter", "n", "", "change network adapter")
+}
 
+func init() {
 	diskCmd.AddCommand(
 		diskCreate,
 	)

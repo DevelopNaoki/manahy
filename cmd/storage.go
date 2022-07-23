@@ -19,16 +19,12 @@ var storageList = &cobra.Command{
 	Use:   "list",
 	Short: "listing all storage",
 	Args:  cobra.RangeArgs(0, 0),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		storageList, err := modules.GetStorageList()
 		if err != nil {
-			fmt.Print(err)
+			return err
 		}
-		fmt.Print("Storage\n")
-		for i := range storageList.Number {
-			fmt.Printf("- %s: %s: %.2f %s\n", storageList.Number[i], storageList.FriendlyName[i], storageList.Size[i], storageList.SizeUnit[i])
-		}
-		fmt.Print("\n")
-		fmt.Print("More infomation, execute 'Get-Disk'\n")
+		displayStorageList(storageList)
+		return nil
 	},
 }

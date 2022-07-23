@@ -15,68 +15,51 @@ var switchCmd = &cobra.Command{
 	},
 }
 
-var switchListOption struct {
-	external bool
-	internal bool
-	private  bool
-	all      bool
-}
 var switchList = &cobra.Command{
 	Use:   "list",
 	Short: "Print switch list",
 	Args:  cobra.RangeArgs(0, 0),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if switchListOption.external || switchListOption.internal || switchListOption.private {
 			switchListOption.all = false
 		}
 
 		switchList, err := modules.GetSwitchList()
 		if err != nil {
-			fmt.Print(err)
+			return err
 		}
 
 		if switchListOption.external || switchListOption.all {
-			fmt.Print("External Switch's\n")
-			for i := range switchList.External {
-				fmt.Printf("- %s\n", switchList.External[i])
-			}
-			fmt.Print("\n")
+			displayList(switchList.External, "External Swotch's")
 		}
 
 		if switchListOption.internal || switchListOption.all {
-			fmt.Print("Internal Switch's\n")
-			for i := range switchList.Internal {
-				fmt.Printf("- %s\n", switchList.Internal[i])
-			}
-			fmt.Print("\n")
+			displayList(switchList.Internal, "Internal Swotch's")
 		}
 
 		if switchListOption.private || switchListOption.all {
-			fmt.Print("Private switch's\n")
-			for i := range switchList.Private {
-				fmt.Printf("- %s\n", switchList.Private[i])
-			}
-			fmt.Print("\n")
+			displayList(switchList.Private, "Private Swotch's")
 		}
+		return nil
 	},
 }
 
-var switchCreateOption modules.Network
 var switchCreate = &cobra.Command{
 	Use:   "create",
 	Short: "Create switch",
 	Args:  cobra.RangeArgs(0, 0),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if switchCreateOption.Name == "" || switchCreateOption.Type == "" {
-			fmt.Print("error: Please specify switch name and switch type\n")
+			return fmt.Errorf("error: Please specify switch name and switch type")
 		} else if switchCreateOption.Type == "external" && switchCreateOption.ExternameInterface == "" {
-			fmt.Print("error: Please specify an external interface\n")
+			return fmt.Errorf("error: Please specify an external interface")
 		} else {
 			err := modules.CreateSwitch(switchCreateOption)
 			if err != nil {
-				fmt.Print(err)
+				return err
 			}
 		}
+		return nil
 	},
 }
 
@@ -84,28 +67,29 @@ var switchRemove = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove switch",
 	Args:  cobra.RangeArgs(1, 1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := modules.RemoveSwitch(args[0])
 		if err != nil {
-			fmt.Print(err)
+			return err
 		}
+		return nil
 	},
 }
 
-var newSwitchName string
 var switchRename = &cobra.Command{
 	Use:   "rename",
 	Short: "Rename switch",
 	Args:  cobra.RangeArgs(1, 1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if newSwitchName == "" {
-			fmt.Print("error: need new switch name\n")
+			return fmt.Errorf("error: need new switch name\n")
 		} else {
 			err := modules.RenameSwitch(args[0], newSwitchName)
 			if err != nil {
-				fmt.Print(err)
+				return err
 			}
 		}
+		return nil
 	},
 }
 
@@ -117,28 +101,28 @@ var switchOptionCfgCmd = &cobra.Command{
 	},
 }
 
-var switchType string
 var switchOptionCfgType = &cobra.Command{
 	Use:   "type",
 	Short: "Configure switch type",
 	Args:  cobra.RangeArgs(1, 1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := modules.ChangeSwitchType(args[0], switchType)
 		if err != nil {
-			fmt.Print(err)
+			return err
 		}
+		return nil
 	},
 }
 
-var netAdapter string
 var switchOptionCfgNetAdapter = &cobra.Command{
 	Use:   "adapter",
 	Short: "Configure network adapter",
 	Args:  cobra.RangeArgs(1, 1),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := modules.ChangeSwitchNetAdapter(args[0], netAdapter)
 		if err != nil {
-			fmt.Print(err)
+			return err
 		}
+		return nil
 	},
 }
