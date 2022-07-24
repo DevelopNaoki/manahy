@@ -1,23 +1,14 @@
 package modules
 
 import (
-	"fmt"
 	"strconv"
 )
 
 func BuildByStruct(summarize Summarize) error {
 	for _, disk := range summarize.Disks {
-		state, e := isFileExist(disk.Path)
-		if e != nil {
-			return e
-		}
-		if !state && !disk.Import {
-			err := CreateDisk(disk)
-			if err != nil {
-				return err
-			}
-		} else if !state && disk.Import {
-			return fmt.Errorf("%s is not exist", disk.Path)
+		err := CreateDisk(disk)
+		if err != nil {
+			return err
 		}
 	}
 

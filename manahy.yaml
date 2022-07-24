@@ -13,7 +13,6 @@ vms:
     image: C:\Users\naoki\Downloads\vyos-1.4-rolling-202207070217-amd64.iso
     disk: 
     - test.vhd
-    - test2.vhd
     network:
     - ex1
     - internal

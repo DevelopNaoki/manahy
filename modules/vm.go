@@ -331,7 +331,7 @@ func checkVmParam(newVm Vm) error {
 		return fmt.Errorf("error: Generation is not a valid value\n")
 	}
 
-	vmPathExist, err := isFileExist(newVm.Path+"\\"+newVm.Name)
+	vmPathExist, err := isFileExist(newVm.Path + "\\" + newVm.Name)
 	if err != nil {
 		return err
 	}
