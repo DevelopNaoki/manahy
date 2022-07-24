@@ -82,26 +82,26 @@ func vmListingOfExecuteResults(res []byte) (vmList VmList, err error) {
 }
 
 func switchListingOfExecuteResults(res []byte) (switchList SwitchList, err error) {
-        split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
-        for i := range split {
-                split[i] = strings.TrimSpace(split[i])
-                if !strings.Contains(split[i], "Name") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
-                        switchType := regexp.MustCompile("External$|Internal$|Private$").FindString(split[i])
-                        split[i] = regexp.MustCompile("External$|Internal$|Private$").ReplaceAllString(split[i], "")
-                        split[i] = strings.TrimSpace(split[i])
+	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
+	for i := range split {
+		split[i] = strings.TrimSpace(split[i])
+		if !strings.Contains(split[i], "Name") && !regexp.MustCompile("^[-\\s]*$").Match([]byte(split[i])) {
+			switchType := regexp.MustCompile("External$|Internal$|Private$").FindString(split[i])
+			split[i] = regexp.MustCompile("External$|Internal$|Private$").ReplaceAllString(split[i], "")
+			split[i] = strings.TrimSpace(split[i])
 
-                        switch switchType {
-                        case "External":
-                                switchList.External = append(switchList.External, split[i])
-                        case "Internal":
-                                switchList.Internal = append(switchList.Internal, split[i])
-                        case "Private":
-                                switchList.Private = append(switchList.Private, split[i])
-                        default:
-                                return switchList, fmt.Errorf("Unknown error for switch list")
-                        }
-                }
-        }
+			switch switchType {
+			case "External":
+				switchList.External = append(switchList.External, split[i])
+			case "Internal":
+				switchList.Internal = append(switchList.Internal, split[i])
+			case "Private":
+				switchList.Private = append(switchList.Private, split[i])
+			default:
+				return switchList, fmt.Errorf("Unknown error for switch list")
+			}
+		}
+	}
 	return switchList, nil
 }
 

@@ -25,16 +25,14 @@ func GetVmList() (vmList VmList, err error) {
 func GetVmState(name string) (state string) {
 	res, err := exec.Command("powershell", "-NoProfile", "Get-VM '"+name+"' | Format-Table State").Output()
 	if err != nil {
-		state = "NotFound"
+		return "NotFound"
 	} else {
 		vmState := listingOfExecuteResults(res, "State")
 		if len(vmState) == 1 {
-			state = vmState[0]
-		} else {
-			state = "Unknown"
+			return vmState[0]
 		}
 	}
-	return
+	return "Unknown"
 }
 
 func SetVmProcessor(name string, cpu Cpu) error {
@@ -42,25 +40,27 @@ func SetVmProcessor(name string, cpu Cpu) error {
 
 	if GetVmState(name) != "NotFound" {
 		cmd = "Set-VMProcessor " + name + " "
-	}
-	if cpu.Thread > 0 {
-		cmd = cmd + "-Count " + strconv.Itoa(cpu.Thread) + " "
-	}
-	if cpu.Reserve <= 100 && cpu.Reserve >= 0 {
-		cmd = cmd + " -Reserve " + strconv.Itoa(cpu.Reserve) + " "
-	}
-	if cpu.Maximum <= 100 && cpu.Maximum >= 0 {
-		cmd = cmd + " -Maximum " + strconv.Itoa(cpu.Maximum) + " "
-	}
-	if cpu.RelativeWeight <= 10000 && cpu.RelativeWeight > 0 {
-		cmd = cmd + " -RelativeWeight " + strconv.Itoa(cpu.RelativeWeight) + " "
-	}
-	cmd = cmd + " -ExposeVirtualizationExtensions " + strconv.FormatBool(cpu.Nested)
+		if cpu.Thread > 0 {
+			cmd += "-Count " + strconv.Itoa(cpu.Thread) + " "
+		}
+		if cpu.Reserve <= 100 && cpu.Reserve >= 0 {
+			cmd += " -Reserve " + strconv.Itoa(cpu.Reserve) + " "
+		}
+		if cpu.Maximum <= 100 && cpu.Maximum >= 0 {
+			cmd += " -Maximum " + strconv.Itoa(cpu.Maximum) + " "
+		}
+		if cpu.RelativeWeight <= 10000 && cpu.RelativeWeight > 0 {
+			cmd += " -RelativeWeight " + strconv.Itoa(cpu.RelativeWeight) + " "
+		}
+		cmd += " -ExposeVirtualizationExtensions " + strconv.FormatBool(cpu.Nested)
 
-	err := exec.Command("powershell", "-NoProfile", cmd).Run()
+		err := exec.Command("powershell", "-NoProfile", cmd).Run()
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("%s is not found")
 	}
 	return nil
 }
