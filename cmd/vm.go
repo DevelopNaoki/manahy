@@ -63,6 +63,19 @@ var vmCreate = &cobra.Command{
 	Short: "create VM",
 	Args:  cobra.RangeArgs(0, 0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		vm.Memory.Dynamic = !vm.Memory.Dynamic
+		if vmDisk != "" {
+			vm.Disks = append(vm.Disks, vmDisk)
+		}
+		if vmSwitch != "" {
+			vm.Networks = append(vm.Networks, vmSwitch)
+		}
+
+		err := modules.CreateVm(vm)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	},
 }

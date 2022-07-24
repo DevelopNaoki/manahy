@@ -86,10 +86,12 @@ func CreateSwitch(newSwitch Network) error {
 		return err
 	}
 
+	cmd = "New-VMSwitch -name '" + newSwitch.Name + "'"
 	if newSwitch.Type == "external" {
-		cmd = "New-VMSwitch -name '" + newSwitch.Name + "' -NetAdapterName '" + newSwitch.ExternameInterface + "' -AllowManagementOS $" + strconv.FormatBool(newSwitch.AllowManagementOs)
+		cmd += " -NetAdapterName '" + newSwitch.ExternameInterface + "'"
+		cmd += " -AllowManagementOS $" + strconv.FormatBool(newSwitch.AllowManagementOs)
 	} else {
-		cmd = "New-VMSwitch -name '" + newSwitch.Name + "' -SwitchType " + newSwitch.Type
+		cmd += " -SwitchType " + newSwitch.Type
 	}
 
 	err = exec.Command("powershell", "-NoProfile", cmd).Run()

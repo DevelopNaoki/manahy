@@ -12,6 +12,9 @@ var vmListOption struct {
 	all      bool
 }
 var newVmName string
+var vm modules.Vm
+var vmDisk string
+var vmSwitch string
 
 var diskCreateOption modules.Disk
 

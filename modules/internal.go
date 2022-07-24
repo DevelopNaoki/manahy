@@ -9,7 +9,7 @@ import (
 )
 
 func isFileExist(path string) (exist bool, err error) {
-	res, e := exec.Command("powershell", "-NoProfile", "Test-Path '"+path+"'").Output()
+	res, e := exec.Command("powershell", "-NoProfile", "Test-Path \""+path+"\"").Output()
 	if e != nil {
 		return false, fmt.Errorf("error: failed execute 'Test-Path'")
 	}

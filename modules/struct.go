@@ -18,16 +18,16 @@ type Vm struct {
 	Memory     Memory   `yaml:"memory" json:"network"`
 	Path       string   `yaml:"path" json:"path"`
 	Image      string   `yaml:"image,omitempty" json:"image"`
-	Disk       []string `yaml:"disk"`
-	Network    []string `yaml:"network"`
+	Disks      []string `yaml:"disk"`
+	Networks   []string `yaml:"network"`
 }
 
 type Cpu struct {
-	Thread         int  `yaml:"thread"`
-	Reserve        int  `yaml:"reserve"`
-	Maximum        int  `yaml:"maximum"`
-	RelativeWeight int  `yaml:"relative-weight"`
-	Nested         bool `yaml:"nested"`
+	Thread int `yaml:"thread"`
+	/*	Reserve        int  `yaml:"reserve"`
+		Maximum        int  `yaml:"maximum"`
+		RelativeWeight int  `yaml:"relative-weight"`
+	*/Nested bool `yaml:"nested"`
 }
 
 type Memory struct {

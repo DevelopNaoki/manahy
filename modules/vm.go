@@ -36,57 +36,178 @@ func GetVmState(name string) (state string) {
 }
 
 func SetVmProcessor(name string, cpu Cpu) error {
-	var cmd string
-
-	if GetVmState(name) != "NotFound" {
-		cmd = "Set-VMProcessor " + name + " "
-		if cpu.Thread > 0 {
-			cmd += "-Count " + strconv.Itoa(cpu.Thread) + " "
-		}
-		if cpu.Reserve <= 100 && cpu.Reserve >= 0 {
-			cmd += " -Reserve " + strconv.Itoa(cpu.Reserve) + " "
-		}
-		if cpu.Maximum <= 100 && cpu.Maximum >= 0 {
-			cmd += " -Maximum " + strconv.Itoa(cpu.Maximum) + " "
-		}
-		if cpu.RelativeWeight <= 10000 && cpu.RelativeWeight > 0 {
-			cmd += " -RelativeWeight " + strconv.Itoa(cpu.RelativeWeight) + " "
-		}
-		cmd += " -ExposeVirtualizationExtensions " + strconv.FormatBool(cpu.Nested)
-
-		err := exec.Command("powershell", "-NoProfile", cmd).Run()
-
-		if err != nil {
-			return err
-		}
-	} else {
-		return fmt.Errorf("%s is not found")
+	if GetVmState(name) == "NotFound" {
+		return fmt.Errorf("%s is not exist", name)
 	}
-	return nil
-}
-
-func SetVmMemory(name string) {
-}
-
-func CreateVm(newVm Vm) error {
-	err := CheckVmParam(newVm)
+	err := checkVmProcessorParam(cpu)
 	if err != nil {
 		return err
 	}
 
-	cmd := "New-VM -Name " + newVm.Name + " -Generation " + strconv.Itoa(newVm.Generation) + " -Path " + newVm.Path + " -MemoryStartupBytes " + newVm.Memory.Size
+	cmd := "Set-VMProcessor " + name
+	cmd += " -Count " + strconv.Itoa(cpu.Thread)
+	/*	cmd += " -Reserve "+strconv.Itoa(cpu.Reserve)
+		cmd += " -Maximum "+strconv.Itoa(cpu.Maximum)
+		cmd += " -RelativeWeight "+strconv.Itoa(cpu.RelativeWeight)
+	*/cmd += " -ExposeVirtualizationExtensions $" + strconv.FormatBool(cpu.Nested)
+
+	fmt.Printf("%s\n", cmd)
+
 	err = exec.Command("powershell", "-NoProfile", cmd).Run()
 	if err != nil {
 		return err
 	}
-	SetVmProcessor(newVm.Name, newVm.Cpu)
+
+	return nil
+}
+
+func SetVmMemory(name string, memory Memory) error {
+	if GetVmState(name) == "NotFound" {
+		return fmt.Errorf("%s is not exist", name)
+	}
+	err := checkVmMemoryParam(memory)
+	if err != nil {
+		return err
+	}
+
+	cmd := "Set-VMMemory -VMName " + name
+	cmd += " -StartupBytes " + memory.Size
+	cmd += " -DynamicMemoryEnabled $" + strconv.FormatBool(memory.Dynamic)
+
+	fmt.Printf("%s\n", cmd)
+
+	err = exec.Command("powershell", "-NoProfile", cmd).Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SetVmHardDisk(name string, disks []string) error {
+	if GetVmState(name) == "NotFound" {
+		return fmt.Errorf("%s is not exist", name)
+	}
+
+	for _, disk := range disks {
+		diskExist, err := isFileExist(disk)
+		if err != nil {
+			return err
+		} else if !diskExist {
+			return fmt.Errorf("%s is not exist", disk)
+		}
+
+		cmd := "Add-VMHardDiskDrive -VMName " + name
+		cmd += " -Path " + disk
+
+		fmt.Printf("%s\n", cmd)
+
+		err = exec.Command("powershell", "-NoProfile", cmd).Run()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func SetVmImageFile(name string, image string) error {
+	if GetVmState(name) == "NotFound" {
+		return fmt.Errorf("%s is not exist", name)
+	}
+
+	fileExist, err := isFileExist(image)
+	if err != nil {
+		return err
+	} else if !fileExist {
+		return fmt.Errorf("%s is not exist", image)
+	}
+
+	cmd := "Add-VMDvdDrive -VMName " + name
+	cmd += " -Path " + image
+
+	fmt.Printf("%s\n", cmd)
+
+	err = exec.Command("powershell", "-NoProfile", cmd).Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SetVmSwitch(name string, networks []string) error {
+	for _, network := range networks {
+		switchExist := GetSwitchType(network)
+		if switchExist == "NotFound" || switchExist == "Unknown" {
+			return fmt.Errorf("%s is not exist", network)
+		} else if switchExist == "Unknown" {
+			return fmt.Errorf("%s is Unknown error", network)
+		}
+
+		cmd := "Add-VMNetworkAdapter -VMName " + name
+		cmd += " -SwitchName " + network
+
+		fmt.Printf("%s\n", cmd)
+
+		err := exec.Command("powershell", "-NoProfile", cmd).Run()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func CreateVm(newVm Vm) error {
+	err := checkVmParam(newVm)
+	if err != nil {
+		return err
+	}
+
+	cmd := "New-VM -Name " + newVm.Name
+	cmd += " -Generation " + strconv.Itoa(newVm.Generation)
+	cmd += " -Path " + newVm.Path
+
+	fmt.Printf("%s\n", cmd)
+
+	err = exec.Command("powershell", "-NoProfile", cmd).Run()
+	if err != nil {
+		return err
+	}
+
+	for true {
+		state := GetVmState(newVm.Name)
+		if state != "NotFound" && state != "Unknown" {
+			break
+		}
+	}
+
+	err = SetVmProcessor(newVm.Name, newVm.Cpu)
+	if err != nil {
+		return err
+	}
+	err = SetVmMemory(newVm.Name, newVm.Memory)
+	if err != nil {
+		return err
+	}
+	err = SetVmHardDisk(newVm.Name, newVm.Disks)
+	if err != nil {
+		return err
+	}
+	err = SetVmImageFile(newVm.Name, newVm.Image)
+	if err != nil {
+		return err
+	}
+	err = SetVmSwitch(newVm.Name, newVm.Networks)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func RemoveVm(name string) error {
 	if GetVmState(name) == "NotFound" {
-		return fmt.Errorf("error: %s is not exist", name)
+		return fmt.Errorf("%s is not exist", name)
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Remove-VM -Name "+name+" -Force").Run()
 		if err != nil {
@@ -98,9 +219,9 @@ func RemoveVm(name string) error {
 
 func RenameVm(name string, newName string) error {
 	if GetVmState(name) == "NotFound" {
-		return fmt.Errorf("error: %s is not exist", name)
+		return fmt.Errorf("%s is not exist", name)
 	} else if GetVmState(newName) != "NotFound" {
-		return fmt.Errorf("error: %s is already exist", newName)
+		return fmt.Errorf("%s is already exist", newName)
 	} else {
 		err := exec.Command("powershell", "-NoProfile", "Rename-VM -Name "+name+" -NewName "+newName).Run()
 		if err != nil {
@@ -175,6 +296,7 @@ func SaveVm(name string) error {
 	return nil
 }
 
+// SuspendVm suspend vm
 func SuspendVm(name string) error {
 	if GetVmState(name) == "Running" {
 		err := exec.Command("powershell", "-NoProfile", "Suspend-VM -Name '"+name+"'").Run()
@@ -187,6 +309,7 @@ func SuspendVm(name string) error {
 	return nil
 }
 
+// RestartVM restart vm
 func RestartVm(name string) error {
 	if GetVmState(name) == "Running" {
 		err := exec.Command("powershell", "-NoProfile", "Restart-VM -Name '"+name+"' -Force").Run()
@@ -196,5 +319,54 @@ func RestartVm(name string) error {
 	} else {
 		return fmt.Errorf("%s is not running", name)
 	}
+	return nil
+}
+
+func checkVmParam(newVm Vm) error {
+	if GetVmState(newVm.Name) != "NotFound" {
+		return fmt.Errorf("error: " + newVm.Name + " is already existed\n")
+	}
+
+	if newVm.Generation < 1 || newVm.Generation > 2 {
+		return fmt.Errorf("error: Generation is not a valid value\n")
+	}
+
+	vmPathExist, err := isFileExist(newVm.Path)
+	if err != nil {
+		return err
+	}
+	if vmPathExist {
+		return fmt.Errorf("error: " + newVm.Path + " is already exist\n")
+	}
+
+	if newVm.Image != "" {
+		imageExist, err := isFileExist(newVm.Image)
+		if err != nil {
+			return err
+		} else if !imageExist {
+			return fmt.Errorf("error: " + newVm.Image + " is doesnt exist\n")
+		}
+	}
+
+	return nil
+}
+
+func checkVmProcessorParam(cpu Cpu) error {
+	if cpu.Thread < 0 {
+		return fmt.Errorf("error: thread does not valid value\n")
+	}
+	/*	if cpu.Reserve > 100 && cpu.Reserve < 0 {
+			return fmt.Errorf("error: cpu reserve does not valid value\n")
+		}
+		if cpu.Maximum > 100 && cpu.Maximum < 0 {
+			return fmt.Errorf("error: cpu maximum does not valid value\n")
+		}
+		if cpu.RelativeWeight > 10000 && cpu.RelativeWeight < 0 {
+			return fmt.Errorf("error: cpu relative weight does not valid value\n")
+		}
+	*/return nil
+}
+
+func checkVmMemoryParam(memory Memory) error {
 	return nil
 }
