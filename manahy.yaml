@@ -1,7 +1,7 @@
 vms:
   testVM:
     name: test
-    count: 1
+    count: 3
     generation: 1
     memory:
       size: 1024
@@ -10,10 +10,10 @@ vms:
       thread: 1
       nested: true
     path: C:\test
-    image: C:\test\test.iso
+    image: C:\Users\naoki\Downloads\vyos-1.4-rolling-202207070217-amd64.iso
     disk: 
-    - disk1
-    - disk2
+    - test.vhd
+    - test2.vhd
     network:
     - ex1
     - internal
@@ -24,13 +24,11 @@ disks:
     path: test.vhd
   testDisk:
     import: true
-    path: C:\test2.vhd
+    path: test2.vhd
 networks:
   sw1:
     name: ex1
-    type: external
-    extername-interface: "Ethernet 1"
-    allow-management-os: true
+    type: private
   testSW:
     name: internal
     type: internal

@@ -14,19 +14,10 @@ var build = &cobra.Command{
 			return err
 		}
 
-		for i := range data.Disks {
-			err = modules.CreateDisk(data.Disks[i])
+			err = modules.BuildByStruct(data)
 			if err != nil {
 				return err
 			}
-		}
-
-		for i := range data.Networks {
-			err = modules.CreateSwitch(data.Networks[i])
-			if err != nil {
-				return err
-			}
-		}
 		return nil
 	},
 }

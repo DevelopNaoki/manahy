@@ -13,22 +13,24 @@ func CreateDisk(newDisk Disk) error {
 		return err
 	}
 
-	cmd := "New-VHD -Path " + newDisk.Path
-	switch newDisk.Type {
-	case "dynamic":
-		cmd += " -SizeBytes " + newDisk.Size
-	case "fixed":
-		cmd += " -SizeBytes " + newDisk.Size
-		cmd += " -SourceDisk " + strconv.Itoa(newDisk.SourceDisk)
-		cmd += " -Fixed"
-	case "differencing":
-		cmd += " -ParentPath " + newDisk.ParentPath
-		cmd += " -Differencing"
-	}
+	if !newDisk.Import {
+		cmd := "New-VHD -Path " + newDisk.Path
+		switch newDisk.Type {
+		case "dynamic":
+			cmd += " -SizeBytes " + newDisk.Size
+		case "fixed":
+			cmd += " -SizeBytes " + newDisk.Size
+			cmd += " -SourceDisk " + strconv.Itoa(newDisk.SourceDisk)
+			cmd += " -Fixed"
+		case "differencing":
+			cmd += " -ParentPath " + newDisk.ParentPath
+			cmd += " -Differencing"
+		}
 
-	err = exec.Command("powershell", "-NoProfile", cmd).Run()
-	if err != nil {
-		return err
+		err = exec.Command("powershell", "-NoProfile", cmd).Run()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -60,25 +62,27 @@ func checkDiskParam(newDisk Disk) error {
 		return fmt.Errorf("error: %s is already exist", newDisk.Path)
 	}
 
-	err = checkDiskTypeParam(newDisk.Type)
-	if err != nil {
-		return err
-	}
-
-	switch newDisk.Type {
-	case "differencing":
-		parentDiskExist, err := isFileExist(newDisk.ParentPath)
+	if !newDisk.Import {
+		err = checkDiskTypeParam(newDisk.Type)
 		if err != nil {
 			return err
-		} else if !parentDiskExist {
-			return fmt.Errorf("error: Parent disk is not exist")
 		}
-	case "Fixed":
-	}
 
-	err = checkDiskSizeParam(newDisk.Size)
-	if err != nil {
-		return err
+		switch newDisk.Type {
+		case "differencing":
+			parentDiskExist, err := isFileExist(newDisk.ParentPath)
+			if err != nil {
+				return err
+			} else if !parentDiskExist {
+				return fmt.Errorf("error: Parent disk is not exist")
+			}
+		case "Fixed":
+		}
+
+		err = checkDiskSizeParam(newDisk.Size)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
