@@ -62,27 +62,29 @@ func checkDiskParam(newDisk Disk) error {
 		return fmt.Errorf("error: %s is already exist", newDisk.Path)
 	}
 
-	if !newDisk.Import {
-		err = checkDiskTypeParam(newDisk.Type)
+	if newDisk.Import {
+		return nil
+	}
+	
+	err = checkDiskTypeParam(newDisk.Type)
+	if err != nil {
+		return err
+	}
+
+	switch newDisk.Type {
+	case "differencing":
+		parentDiskExist, err := isFileExist(newDisk.ParentPath)
 		if err != nil {
 			return err
+		} else if !parentDiskExist {
+			return fmt.Errorf("error: Parent disk is not exist")
 		}
+	case "Fixed":
+	}
 
-		switch newDisk.Type {
-		case "differencing":
-			parentDiskExist, err := isFileExist(newDisk.ParentPath)
-			if err != nil {
-				return err
-			} else if !parentDiskExist {
-				return fmt.Errorf("error: Parent disk is not exist")
-			}
-		case "Fixed":
-		}
-
-		err = checkDiskSizeParam(newDisk.Size)
-		if err != nil {
-			return err
-		}
+	err = checkDiskSizeParam(newDisk.Size)
+	if err != nil {
+		return err
 	}
 
 	return nil
