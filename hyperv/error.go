@@ -1,4 +1,5 @@
-package modules
+// hyperv package is manage Hyper-V
+package hyperv
 
 import (
 	"fmt"

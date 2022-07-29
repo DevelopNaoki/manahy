@@ -13,24 +13,26 @@ func CreateDisk(newDisk Disk) error {
 		return err
 	}
 
-	if !newDisk.Import {
-		cmd := "New-VHD -Path " + newDisk.Path
-		switch newDisk.Type {
-		case "dynamic":
-			cmd += " -SizeBytes " + newDisk.Size
-		case "fixed":
-			cmd += " -SizeBytes " + newDisk.Size
-			cmd += " -SourceDisk " + strconv.Itoa(newDisk.SourceDisk)
-			cmd += " -Fixed"
-		case "differencing":
-			cmd += " -ParentPath " + newDisk.ParentPath
-			cmd += " -Differencing"
-		}
+	if newDisk.Import {
+		return nil
+	}
 
-		err = exec.Command("powershell", "-NoProfile", cmd).Run()
-		if err != nil {
-			return err
-		}
+	cmd := "New-VHD -Path " + newDisk.Path
+	switch newDisk.Type {
+	case "dynamic":
+		cmd += " -SizeBytes " + newDisk.Size
+	case "fixed":
+		cmd += " -SizeBytes " + newDisk.Size
+		cmd += " -SourceDisk " + strconv.Itoa(newDisk.SourceDisk)
+		cmd += " -Fixed"
+	case "differencing":
+		cmd += " -ParentPath " + newDisk.ParentPath
+		cmd += " -Differencing"
+	}
+
+	err = exec.Command("powershell", "-NoProfile", cmd).Run()
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -65,7 +67,7 @@ func checkDiskParam(newDisk Disk) error {
 	if newDisk.Import {
 		return nil
 	}
-	
+
 	err = checkDiskTypeParam(newDisk.Type)
 	if err != nil {
 		return err
