@@ -201,7 +201,7 @@ func CreateVm(newVm Vm, output bool) error {
 		PrintError("Create Vm", err)
 	}
 	if err != nil {
-		return err
+		return fmt.Errorf("failed create new vm")
 	}
 
 	err = SetVmProcessor(newVm.Name, newVm.Cpu)
@@ -410,7 +410,7 @@ func checkVmParam(newVm Vm) error {
 
 func checkVmGeneration(generation int) error {
 	if generation < 1 || generation > 2 {
-		return fmt.Errorf("generation is not a valid value\n")
+		return fmt.Errorf("generation is not a valid value")
 	}
 	return nil
 }
@@ -425,7 +425,7 @@ func checkVmPath(name string, path string) error {
 
 func checkVmProcessorParam(cpu Cpu) error {
 	if cpu.Thread < 0 {
-		return fmt.Errorf("thread does not valid value\n")
+		return fmt.Errorf("thread does not valid value")
 	}
 	return nil
 }
