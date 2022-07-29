@@ -185,6 +185,9 @@ func SetVmSwitch(name string, networks []string) error {
 
 func CreateVm(newVm Vm, output bool) error {
 	err := checkVmParam(newVm)
+	if output {
+		PrintError("Check Vm Param", err)
+	}
 	if err != nil {
 		return err
 	}
@@ -244,12 +247,16 @@ func CreateVm(newVm Vm, output bool) error {
 	return nil
 }
 
-func RemoveVm(name string) error {
+func RemoveVm(name string, output bool) error {
 	err := IsVmExist(name)
 	if err != nil {
 		return err
 	}
+
 	err = exec.Command("powershell", "-NoProfile", "Remove-VM -Name '"+name+"' -Force").Run()
+	if output {
+		PrintError("Remove Vm", err)
+	}
 	if err != nil {
 		return err
 	}
@@ -375,6 +382,7 @@ func RestartVm(name string) error {
 // --------------- //
 // Check VM Option
 // --------------- //
+
 func checkVmParam(newVm Vm) error {
 	err := IsNotVmExist(newVm.Name)
 	if err != nil {
