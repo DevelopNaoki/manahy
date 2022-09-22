@@ -13,3 +13,12 @@ var RootCmd = &cobra.Command{
 		return fmt.Errorf("need valid command")
 	},
 }
+
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "print manahy version",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Print("manahy version 0.0.0 (beta)\n")
+		return nil
+	},
+}
