@@ -104,4 +104,10 @@ Use "manahy vm [command] --help" for more information about a command.
 * There are two ways to operate vm power: by specifying the vm name or by specifying the vmid.
 If vms with the same name exist, specifying the vm name will perform the operation on all of them. However, if vmid is used, the operation will be performed on only one vm with that vmid.
 
+## Help
+### If the command execution results in garbled characters
+Execute the following command This command changes the terminal character encoding to UTF-8
+```
+> chcp 65001
+```
 
