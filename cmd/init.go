@@ -9,11 +9,19 @@ func init() {
 	cobra.OnInitialize()
 	RootCmd.AddCommand(
 		versionCmd,
-		vmCmd,
 		hypervCmd,
+		groupMemberCmd,
+                vmCmd,
 	)
 
 	// Setting subcommands
+
+	// Add subcommannds for groupCmd
+	groupMemberCmd.AddCommand(
+                groupMemberListCmd,
+                groupMemberAddCmd,
+                groupMemberRemoveCmd,
+        )
 
 	// Add subcommannds for hypervCmd
 	hypervCmd.AddCommand(
