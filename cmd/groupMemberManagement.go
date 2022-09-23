@@ -28,6 +28,7 @@ var groupMemberListCmd = &cobra.Command{
 		for i := range groupMembers {
 			fmt.Printf("- %s\n", groupMembers[i])
 		}
+		fmt.Printf("\n")
 		return nil
         },
 }
