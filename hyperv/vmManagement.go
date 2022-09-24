@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/DevelopNaoki/manahy/internal"
 )
 
 func GetVmList() (vmList []Vm, err error) {
@@ -34,7 +36,7 @@ func GetVmList() (vmList []Vm, err error) {
 				vm.Processor = strings.TrimSpace(processor[1])
 			} else if strings.Contains(split[j], "MemoryStartup") {
 				memory := regexp.MustCompile(":").Split(split[j], -1)
-				vm.Memory = unitConversion(strings.TrimSpace(memory[1]))
+				vm.Memory = internal.ConversionBtoXB(strings.TrimSpace(memory[1]))
 			}
 		}
 		vmList = append(vmList, vm)
