@@ -88,3 +88,25 @@ var vmListCmd = &cobra.Command{
 		return nil
 	},
 }
+
+var vmRemoveCmd = &cobra.Command{
+        Use:   "remove",
+        Short: "remove VM",
+        Args:  cobra.RangeArgs(0, 100),
+        RunE: func(cmd *cobra.Command, args []string) error {
+                if vmId != "" {
+                        err := hyperv.RemoveVmById(vmId)
+                        if err != nil {
+                                return err
+                        }
+                }
+                // Multiple VM name specification supported
+                for i := range args {
+                        err := hyperv.RemoveVm(args[i])
+                        if err != nil {
+                                return err
+                        }
+                }
+                return nil
+        },
+}
