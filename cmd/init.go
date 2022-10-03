@@ -26,6 +26,7 @@ func init() {
 	// Add subcommannds for hypervCmd
 	hypervCmd.AddCommand(
 		hypervCheckCmd,
+		hypervEnableCmd,
 	)
 
 	// Add subcommands for vmCmd
