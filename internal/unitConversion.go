@@ -10,7 +10,7 @@ func ConversionBtoXB(num string) string {
         f, _ := strconv.ParseFloat(num, 64)
         unit := "B"
         for f >= 1000 {
-                f = f / 1000
+                f = f/1000
                 switch unit {
                 case "B":
                         unit = "KB"
@@ -33,7 +33,7 @@ func ConversionXBtoB(value string) string {
         f, _ := strconv.ParseFloat(num, 64)
 	
         for unit == "B" {
-                f = f * 1000
+                f = f*1000
                 switch unit {
                 case "TB":
                         unit = "GB"
