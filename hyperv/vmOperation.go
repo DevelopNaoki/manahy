@@ -315,20 +315,18 @@ func RebootVm(vmName string, force bool) error {
 		}
 	}
 
-        switch {
-        case force:
-          rebootCmd := "Restart-VM -Force"
-        default:
-          rebootCmd := "Restart-VM"
-        }
-	err = exec.Command("powershell", "-NoProf",rebootCmd+" -Name '"+vmName+"'").Run()
+	rebootCmd := "Restart-VM"
+	if force {
+		rebootCmd += " -Force"
+	}
+	err = exec.Command("powershell", "-NoProf", rebootCmd+" -Name '"+vmName+"'").Run()
 	if err != nil {
 		return fmt.Errorf("failed reboot vm")
 	}
 	return nil
 }
 
-func RebootVmById(vmid string) error {
+func RebootVmById(vmid string, force bool) error {
 	vmState, err := GetVmStateById(vmid)
 	if err != nil {
 		return err
@@ -337,7 +335,11 @@ func RebootVmById(vmid string) error {
 		return fmt.Errorf("%s is not running", vmid)
 	}
 
-	err = exec.Command("powershell", "-NoProfile", "Get-VM | Where-Object VMId -eq '"+vmid+"' | Restart-VM -Force").Run()
+	rebootCmd := "Restart-VM"
+	if force {
+		rebootCmd += " -Force"
+	}
+	err = exec.Command("powershell", "-NoProfile", "Get-VM | Where-Object VMId -eq '"+vmid+"' |"+rebootCmd).Run()
 	if err != nil {
 		return fmt.Errorf("failed reboot vm")
 	}
