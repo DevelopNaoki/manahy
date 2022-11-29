@@ -72,7 +72,7 @@ var vmListCmd = &cobra.Command{
 		for i := range vmList {
 			// Do not display results that do not match the options
 			r_disable := vmList[i].State == "Running" && (!vmListOption.Active && !vmListOption.All)
-			o_disable := vmList[i].State == "Off" && (!vmListOption.Off && !vmListOption.All)
+			o_disable := vmList[i].State == "Off" && (!vmListOption.Inactive && !vmListOption.All)
 			p_disable := vmList[i].State == "Paused" && (!vmListOption.Paused && !vmListOption.All)
 			s_disable := vmList[i].State == "Saved" && (!vmListOption.Saved && !vmListOption.All)
 			if r_disable || o_disable || p_disable || s_disable {
