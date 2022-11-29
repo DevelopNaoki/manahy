@@ -74,7 +74,7 @@ var vmListCmd = &cobra.Command{
 			r_disable := vmList[i].State == "Running" && (!vmListOption.Active || !vmListOption.All)
 			o_disable := vmList[i].State == "Off" && (vmListOption.Active || vmListOption.Saved || vmListOption.Paused)
 			p_disable := vmList[i].State == "Paused" && (!vmListOption.Paused && !vmListOption.All)
-                        s_disable := vmList[i].State == "Saved" && (!vmListOption.Saved && !vmListOption.All)
+			s_disable := vmList[i].State == "Saved" && (!vmListOption.Saved && !vmListOption.All)
 			if r_disable || o_disable || p_disable || s_disable {
 				continue
 			} else {
@@ -90,23 +90,23 @@ var vmListCmd = &cobra.Command{
 }
 
 var vmRemoveCmd = &cobra.Command{
-        Use:   "remove",
-        Short: "remove VM",
-        Args:  cobra.RangeArgs(0, 100),
-        RunE: func(cmd *cobra.Command, args []string) error {
-                if vmId != "" {
-                        err := hyperv.RemoveVmById(vmId)
-                        if err != nil {
-                                return err
-                        }
-                }
-                // Multiple VM name specification supported
-                for i := range args {
-                        err := hyperv.RemoveVm(args[i])
-                        if err != nil {
-                                return err
-                        }
-                }
-                return nil
-        },
+	Use:   "remove",
+	Short: "remove VM",
+	Args:  cobra.RangeArgs(0, 100),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if vmId != "" {
+			err := hyperv.RemoveVmById(vmId)
+			if err != nil {
+				return err
+			}
+		}
+		// Multiple VM name specification supported
+		for i := range args {
+			err := hyperv.RemoveVm(args[i])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	},
 }

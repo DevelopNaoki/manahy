@@ -11,17 +11,17 @@ func init() {
 		versionCmd,
 		hypervCmd,
 		groupMemberCmd,
-                vmCmd,
+		vmCmd,
 	)
 
 	// Setting subcommands
 
 	// Add subcommannds for groupCmd
 	groupMemberCmd.AddCommand(
-                groupMemberListCmd,
-                groupMemberAddCmd,
-                groupMemberRemoveCmd,
-        )
+		groupMemberListCmd,
+		groupMemberAddCmd,
+		groupMemberRemoveCmd,
+	)
 
 	// Add subcommannds for hypervCmd
 	hypervCmd.AddCommand(

@@ -21,11 +21,11 @@ func GetVmList() (vmList []Vm, err error) {
 		var vm Vm
 		split := regexp.MustCompile("\r\n|\n").Split(vms[i], -1)
 		for j := range split {
-                        switch {
+			switch {
 			case strings.Contains(split[j], "VMName"):
 				vmName := regexp.MustCompile(":").Split(split[j], -1)
 				vm.VmName = strings.TrimSpace(vmName[1])
-			case strings.Contains(split[j], "VMId") :
+			case strings.Contains(split[j], "VMId"):
 				vmId := regexp.MustCompile(":").Split(split[j], -1)
 				vm.VmId = strings.TrimSpace(vmId[1])
 			case strings.Contains(split[j], "State"):
@@ -127,4 +127,3 @@ func RemoveVmById(vmid string) error {
 	}
 	return nil
 }
-

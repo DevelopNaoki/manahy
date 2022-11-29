@@ -42,7 +42,7 @@ var hypervEnableCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		
+
 		return nil
 	},
 }

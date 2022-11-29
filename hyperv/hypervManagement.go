@@ -19,7 +19,7 @@ func CheckHypervEnabled() (enabled bool, err error) {
 }
 
 func EnableHyperv() error {
-        hasEnabled, err := CheckHypervEnabled()
+	hasEnabled, err := CheckHypervEnabled()
 	if err != nil {
 		return err
 	}

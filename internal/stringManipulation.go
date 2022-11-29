@@ -7,7 +7,7 @@ import (
 // Add trailing whitespace for size to text
 func SizeAdjustment(text string, size int) string {
 	for len(text) < size {
-		text = text+" "
+		text = text + " "
 	}
 	return text
 }
