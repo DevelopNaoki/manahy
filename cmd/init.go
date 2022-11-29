@@ -41,8 +41,7 @@ func init() {
 		vmRebootCmd,
 	)
 
-	// Setting Options
-
+	// Setting Subcommands Options
 	// Option of vmListCmd
 	vmListCmd.Flags().BoolVarP(&vmListOption.Active, "active", "", true, "display running vm")
 	vmListCmd.Flags().BoolVarP(&vmListOption.Inactive, "inactive", "", false, "display power off vm")
