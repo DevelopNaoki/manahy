@@ -21,7 +21,6 @@ func GetVmList() (vmList []Vm, err error) {
 		var vm Vm
 		split := regexp.MustCompile("\r\n|\n").Split(vms[i], -1)
 		for j := range split {
-			fmt.Print(strings.Contains(split[j], "VMId"))
 			switch {
 			case strings.Contains(split[j], "VMName"):
 				vmName := regexp.MustCompile(":").Split(split[j], -1)
@@ -39,6 +38,7 @@ func GetVmList() (vmList []Vm, err error) {
 				memory := regexp.MustCompile(":").Split(split[j], -1)
 				vm.Memory = internal.ConversionBtoXB(strings.TrimSpace(memory[1]))
 			default:
+				fmt.Print("aaaaaaaaaaaaaaaaaaa")
 			}
 		}
 		vmList = append(vmList, vm)
