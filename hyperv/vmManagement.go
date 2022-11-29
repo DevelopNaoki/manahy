@@ -21,19 +21,20 @@ func GetVmList() (vmList []Vm, err error) {
 		var vm Vm
 		split := regexp.MustCompile("\r\n|\n").Split(vms[i], -1)
 		for j := range split {
-			if strings.Contains(split[j], "VMName") {
+                        switch{
+			case strings.Contains(split[j], "VMName"):
 				vmName := regexp.MustCompile(":").Split(split[j], -1)
 				vm.VmName = strings.TrimSpace(vmName[1])
-			} else if strings.Contains(split[j], "VMId") {
+			case strings.Contains(split[j], "VMId") :
 				vmId := regexp.MustCompile(":").Split(split[j], -1)
 				vm.VmId = strings.TrimSpace(vmId[1])
-			} else if strings.Contains(split[j], "State") {
+			case strings.Contains(split[j], "State"):
 				state := regexp.MustCompile(":").Split(split[j], -1)
 				vm.State = strings.TrimSpace(state[1])
-			} else if strings.Contains(split[j], "ProcessorCount") {
+			case strings.Contains(split[j], "ProcessorCount"):
 				processor := regexp.MustCompile(":").Split(split[j], -1)
 				vm.Processor = strings.TrimSpace(processor[1])
-			} else if strings.Contains(split[j], "MemoryStartup") {
+			case strings.Contains(split[j], "MemoryStartup"):
 				memory := regexp.MustCompile(":").Split(split[j], -1)
 				vm.Memory = internal.ConversionBtoXB(strings.TrimSpace(memory[1]))
 			}
