@@ -145,33 +145,16 @@ var vmRebootCmd = &cobra.Command{
 	Args:  cobra.RangeArgs(0, 100),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// vmHardReboot is force reboot
-		if vmHardReboot {
-			if vmId != "" {
-				err := hyperv.HardRebootVmById(vmId)
-				if err != nil {
-					return err
-				}
+		if vmId != "" {
+			err := hyperv.RebootVmById(vmId, vmHardReboot)
+			if err != nil {
+				return err
 			}
-			// Multiple VM name specification supported
-			for i := range args {
-				err := hyperv.HardRebootVm(args[i])
-				if err != nil {
-					return err
-				}
-			}
-		} else {
-			if vmId != "" {
-				err := hyperv.SoftRebootVmById(vmId)
-				if err != nil {
-					return err
-				}
-			}
-			// Multiple VM name specification supported
-			for i := range args {
-				err := hyperv.SoftRebootVm(args[i])
-				if err != nil {
-					return err
-				}
+		}// Multiple VM name specification supported
+		for i := range args {
+			err := hyperv.RebootVm(args[i], vmHardReboot)
+			if err != nil {
+				return err
 			}
 		}
 		return nil
