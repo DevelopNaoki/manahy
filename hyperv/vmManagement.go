@@ -41,7 +41,6 @@ func GetVmList() (vmList []Vm, err error) {
 		}
 		vmList = append(vmList, vm)
 	}
-	fmt.Print(vmList)
 	return vmList, nil
 }
 
