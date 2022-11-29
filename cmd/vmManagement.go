@@ -68,6 +68,7 @@ var vmListCmd = &cobra.Command{
 		}
 		internal.PrintHeader(header, headerSize)
 
+		fmt.Print(vmList)
 		// Print vm list
 		for i := range vmList {
 			// Do not display results that do not match the options
