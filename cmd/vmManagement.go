@@ -50,7 +50,6 @@ var vmListCmd = &cobra.Command{
 		for i := range vmList {
 			vmList[i].VmName = internal.SizeAdjustment(vmList[i].VmName, nameSize)
 		}
-		fmt.Print(vmList)
 
 		// List the header string and size and call the function to display the header
 		header := []string{
