@@ -303,3 +303,43 @@ func HardRebootVmById(vmid string) error {
 	}
 	return nil
 }
+
+func RebootVm(vmName string, force bool) error {
+	vmState, err := GetVmState(vmName)
+	if err != nil {
+		return err
+	}
+	for i := range vmState {
+		if vmState[i] != "Running" {
+			return fmt.Errorf("%s is not Running", vmName)
+		}
+	}
+
+        switch {
+        case force:
+          rebootCmd := "Restart-VM -Force"
+        default:
+          rebootCmd := "Restart-VM"
+        }
+	err = exec.Command("powershell", "-NoProf,rebootCmd+" -Name '"+vmName+"'").Run()
+	if err != nil {
+		return fmt.Errorf("failed reboot vm")
+	}
+	return nil
+}
+
+func RebootVmById(vmid string) error {
+	vmState, err := GetVmStateById(vmid)
+	if err != nil {
+		return err
+	}
+	if vmState != "Running" {
+		return fmt.Errorf("%s is not running", vmid)
+	}
+
+	err = exec.Command("powershell", "-NoProfile", "Get-VM | Where-Object VMId -eq '"+vmid+"' | Restart-VM -Force").Run()
+	if err != nil {
+		return fmt.Errorf("failed reboot vm")
+	}
+	return nil
+}
