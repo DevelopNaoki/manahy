@@ -321,7 +321,7 @@ func RebootVm(vmName string, force bool) error {
         default:
           rebootCmd := "Restart-VM"
         }
-	err = exec.Command("powershell", "-NoProf,rebootCmd+" -Name '"+vmName+"'").Run()
+	err = exec.Command("powershell", "-NoProf",rebootCmd+" -Name '"+vmName+"'").Run()
 	if err != nil {
 		return fmt.Errorf("failed reboot vm")
 	}
