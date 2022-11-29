@@ -37,6 +37,7 @@ func GetVmList() (vmList []Vm, err error) {
 			case strings.Contains(split[j], "MemoryStartup"):
 				memory := regexp.MustCompile(":").Split(split[j], -1)
 				vm.Memory = internal.ConversionBtoXB(strings.TrimSpace(memory[1]))
+			default:
 			}
 		}
 		vmList = append(vmList, vm)
