@@ -10,7 +10,7 @@ import (
 func CheckHypervEnabled() (enabled bool, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "(Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V).State").Output()
 	if err != nil {
-		return false, fmt.Errorf("Failed to execute command to check if Hyper-V is enabled")
+		return false, fmt.Errorf("failed check if Hyper-V is enabled: command execution error")
 	}
 	if strings.TrimSpace(string(res)) == "Enabled" {
 		return true, nil
@@ -29,7 +29,7 @@ func EnableHyperv() error {
 
 	err = exec.Command("powershell", "-NoProfile", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All").Run()
 	if err != nil {
-		return fmt.Errorf("Failed to execute command to enable Hyper-V")
+		return fmt.Errorf("failed to enable Hyper-V: command execution error")
 	}
 	return nil
 }

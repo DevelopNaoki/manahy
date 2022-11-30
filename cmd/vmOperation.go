@@ -138,21 +138,21 @@ var vmSuspendCmd = &cobra.Command{
 	},
 }
 
-var vmHardReboot bool
+var vmForceReboot bool
 var vmRebootCmd = &cobra.Command{
 	Use:   "reboot",
 	Short: "reboot VM",
 	Args:  cobra.RangeArgs(0, 100),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// vmHardReboot is force reboot
+		// vmForceReboot is force reboot
 		if vmId != "" {
-			err := hyperv.RebootVmById(vmId, vmHardReboot)
+			err := hyperv.RebootVmById(vmId, vmForceReboot)
 			if err != nil {
 				return err
 			}
 		} // Multiple VM name specification supported
 		for i := range args {
-			err := hyperv.RebootVm(args[i], vmHardReboot)
+			err := hyperv.RebootVm(args[i], vmForceReboot)
 			if err != nil {
 				return err
 			}

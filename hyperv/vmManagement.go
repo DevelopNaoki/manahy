@@ -13,7 +13,7 @@ import (
 func GetVmList() (vmList []Vm, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "(Get-VM | Format-List VMId, VMName, State, ProcessorCount, MemoryStartup | Out-String).Trim()").Output()
 	if err != nil {
-		return vmList, fmt.Errorf("failed get vm list")
+		return vmList, fmt.Errorf("failed get vm list: command execution error")
 	}
 
 	vms := regexp.MustCompile("\r\n\r\n|\n\n").Split(string(res), -1)
@@ -47,7 +47,7 @@ func GetVmList() (vmList []Vm, err error) {
 func GetVmState(vmName string) (status []string, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "(Get-VM | Where-Object VMName -eq '"+vmName+"').State").Output()
 	if err != nil {
-		return status, fmt.Errorf("failed get vm status")
+		return status, fmt.Errorf("failed get vm status: command execution error")
 	}
 
 	split := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
@@ -64,37 +64,37 @@ func GetVmState(vmName string) (status []string, err error) {
 	return status, nil
 }
 
-func GetVmStateById(vmid string) (status string, err error) {
-	res, err := exec.Command("powershell", "-NoProfile", "(Get-VM | Where-Object VMId -eq '"+vmid+"').State").Output()
+func GetVmStateById(vmId string) (status string, err error) {
+	res, err := exec.Command("powershell", "-NoProfile", "(Get-VM | Where-Object VMId -eq '"+vmId+"').State").Output()
 	if err != nil {
-		return status, fmt.Errorf("failed get vm status")
+		return status, fmt.Errorf("failed get vm status: command execution error")
 	}
 
 	status = strings.TrimSpace(string(res))
 	if status == "" {
-		return status, fmt.Errorf("%s does not existed", vmid)
+		return status, fmt.Errorf("%s does not existed", vmId)
 	}
 	return status, nil
 }
 
-func GetVmIdByPath(vmPath string) (vmid string, err error) {
+func GetVmIdByPath(vmPath string) (vmId string, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "(Get-VM | Where-Object ConfigurationLocation -eq '"+vmPath+"').VMId").Output()
 	if err != nil {
-		return vmid, fmt.Errorf("failed get vmid")
+		return vmId, fmt.Errorf("failed get vmId: command execution error")
 	}
 
-	vmid = strings.TrimSpace(string(res))
-	if vmid == "" {
-		return vmid, fmt.Errorf("vm does not existed in %s", vmPath)
+	vmId = strings.TrimSpace(string(res))
+	if vmId == "" {
+		return vmId, fmt.Errorf("vm does not existed in %s", vmPath)
 	}
-	return vmid, nil
+	return vmId, nil
 }
 
 func ShowVm(vmName string) (err error) {
 	return nil
 }
 
-func ShowVmById(vmid string) (err error) {
+func ShowVmById(vmId string) (err error) {
 	return nil
 }
 
@@ -110,20 +110,20 @@ func RemoveVm(vmName string) error {
 
 	err = exec.Command("powershell", "-NoProfile", "Remove-VM -Force -Name '"+vmName+"'").Run()
 	if err != nil {
-		return fmt.Errorf("failed remove vm")
+		return fmt.Errorf("failed remove %s: command execution error", vmName)
 	}
 	return nil
 }
 
-func RemoveVmById(vmid string) error {
-	_, err := GetVmStateById(vmid)
+func RemoveVmById(vmId string) error {
+	_, err := GetVmStateById(vmId)
 	if err != nil {
 		return err
 	}
 
-	err = exec.Command("powershell", "-NoProfile", "Get-VM | Where-Object VMId -wq '"+vmid+"' | Remove-VM -Force").Run()
+	err = exec.Command("powershell", "-NoProfile", "Get-VM | Where-Object VMId -wq '"+vmId+"' | Remove-VM -Force").Run()
 	if err != nil {
-		return fmt.Errorf("failed remove vm")
+		return fmt.Errorf("failed remove %s: command execution error", vmId)
 	}
 	return nil
 }
