@@ -32,6 +32,7 @@ func init() {
 	// Add subcommands for vmCmd
 	vmCmd.AddCommand(
 		vmListCmd,
+		vmRemoveCmd,
 		vmStartCmd,
 		vmResumeCmd,
 		vmShutdownCmd,
@@ -48,6 +49,8 @@ func init() {
 	vmListCmd.Flags().BoolVarP(&vmListOption.Saved, "saved", "", false, "display saved vm")
 	vmListCmd.Flags().BoolVarP(&vmListOption.Paused, "paused", "", false, "display paused vm")
 	vmListCmd.Flags().BoolVarP(&vmListOption.All, "all", "", false, "display all vm")
+	//Option of vmRemoveCmd
+	vmRemoveCmd.Flags().StringVarP(&vmId, "vmid", "i", "", "Remove vm by id")
 	// Option of vmStartCmd
 	vmStartCmd.Flags().StringVarP(&vmId, "vmid", "i", "", "Start vm by id")
 	// Option of vmResumeCmd
@@ -62,5 +65,5 @@ func init() {
 	vmSuspendCmd.Flags().StringVarP(&vmId, "vmid", "i", "", "Suspend vm by id")
 	// Option of vmRebootCmd
 	vmRebootCmd.Flags().StringVarP(&vmId, "vmid", "i", "", "Reboot vm by id")
-	vmRebootCmd.Flags().BoolVarP(&vmHardReboot, "force", "f", false, "Hard Reboot vm")
+	vmRebootCmd.Flags().BoolVarP(&vmForceReboot, "force", "f", false, "Hard Reboot vm")
 }

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 
 	"github.com/DevelopNaoki/manahy/hyperv"
@@ -52,13 +53,7 @@ var vmListCmd = &cobra.Command{
 		}
 
 		// List the header string and size and call the function to display the header
-		header := []string{
-			"VmID",
-			"Vm Name",
-			"State",
-			"Processor",
-			"Memory",
-		}
+		header := []string{"VmID", "Vm Name", "State", "Processor", "Memory"}
 		headerSize := []int{
 			len(vmList[0].VmId),
 			len(vmList[0].VmName),
