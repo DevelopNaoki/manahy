@@ -115,5 +115,5 @@ or
 > ./configCharCode.bat
 ```
 
-### When exiting with an error
+### Error: XXX: command execution error
 May not have enough authority. Try running it with administrator privileges.
