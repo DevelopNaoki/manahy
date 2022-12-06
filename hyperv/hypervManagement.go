@@ -19,11 +19,11 @@ func CheckHypervEnabled() (enabled bool, err error) {
 }
 
 func EnableHyperv() error {
-	hasEnabled, err := CheckHypervEnabled()
+	isEnabled, err := CheckHypervEnabled()
 	if err != nil {
 		return err
 	}
-	if hasEnabled {
+	if isEnabled {
 		return fmt.Errorf("Hyper-V is already enabled")
 	}
 
