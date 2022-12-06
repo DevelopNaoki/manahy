@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-// ConversionBtoXB is conversion for unit [0-9]*B to [KMGT]B
+// ConversionBtoXB is conversion for unit [0-9]*B to [KMGTP]B
 // ex) input: 2000B output: 2KB
 func ConversionBtoXB(num string) string {
 	f, _ := strconv.ParseFloat(num, 64)
@@ -21,12 +21,14 @@ func ConversionBtoXB(num string) string {
 			unit = "GB"
 		case "GB":
 			unit = "TB"
+                case "TB":
+                        unit = "PB"
 		}
 	}
 	return strconv.FormatFloat(f, 'f', 0, 64) + unit
 }
 
-// ConversionBtoXB is conversion for unit [KMGT]B to [0-9]*B
+// ConversionBtoXB is conversion for unit [KMGTP]B to [0-9]*B
 // ex) input: 2KB output: 2000B
 func ConversionXBtoB(value string) string {
 	num := regexp.MustCompile("[0-9.]*").Split(value, -1)[0]
@@ -36,6 +38,8 @@ func ConversionXBtoB(value string) string {
 	for unit != "B" {
 		f = f * 1000
 		switch unit {
+                case "PB":
+                        unit = "TB"
 		case "TB":
 			unit = "GB"
 		case "GB":
