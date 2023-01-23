@@ -12,10 +12,12 @@ func init() {
 		hypervCmd,
 		groupMemberCmd,
 		vmCmd,
+		vmswitchCmd,
 	)
 
 	// Setting subcommands
 
+	//----------------------------------------------------------------------------------
 	// Add subcommannds for groupCmd
 	groupMemberCmd.AddCommand(
 		groupMemberListCmd,
@@ -23,12 +25,14 @@ func init() {
 		groupMemberRemoveCmd,
 	)
 
+	//----------------------------------------------------------------------------------
 	// Add subcommannds for hypervCmd
 	hypervCmd.AddCommand(
 		hypervCheckCmd,
 		hypervEnableCmd,
 	)
 
+	//----------------------------------------------------------------------------------
 	// Add subcommands for vmCmd
 	vmCmd.AddCommand(
 		vmListCmd,
@@ -66,4 +70,16 @@ func init() {
 	// Option of vmRebootCmd
 	vmRebootCmd.Flags().StringVarP(&vmId, "vmid", "i", "", "Reboot vm by id")
 	vmRebootCmd.Flags().BoolVarP(&vmForceReboot, "force", "f", false, "Hard Reboot vm")
+
+	//----------------------------------------------------------------------------------
+	// Add subcommands for vmswitchCmd
+	vmswitchCmd.AddCommand(
+		vmswitchListCmd,
+	)
+
+	//Option of vmswitchListCmd
+	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.All, "all", "a", true, "display all vmswitch")
+	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.External, "external", "e", false, "display external vmswitch")
+	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.internal, "internal", "i", false, "display internal vmswitch")
+	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.Private, "private", "p", false, "display private vmswitch")
 }

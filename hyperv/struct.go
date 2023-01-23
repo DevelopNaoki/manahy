@@ -8,3 +8,9 @@ type Vm struct {
 	Processor string
 	Memory    string
 }
+
+type Vmswitch struct {
+	VmswitchId   string
+	VmswitchName string
+	VmswitchType string
+}
