@@ -74,6 +74,21 @@ var vmswitchListCmd = &cobra.Command{
 				fmt.Printf("%s\t", vmswitchList[i].VmswitchName)
 				fmt.Printf("%s\t", vmswitchList[i].VmswitchType)
 			}
+			fmt.Print("\n")
+		}
+		return nil
+	},
+}
+
+var vmswitchCreateOption hyperv.NewVmswitch
+var vmswitchCreateCmd = &cobra.Command{
+	Use:   "create",
+	Short: "Create VMSwitch list",
+	Args:  cobra.RangeArgs(0, 0),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		err := hyperv.CreateVmswitch(vmswitchCreateOption)
+		if err != nil {
+			return nil
 		}
 		return nil
 	},

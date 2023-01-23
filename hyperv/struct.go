@@ -14,3 +14,10 @@ type Vmswitch struct {
 	VmswitchName string
 	VmswitchType string
 }
+
+type NewVmswitch struct {
+	NewVmswitchName   string
+	NewVmswitchType   string
+	NetAdapterName    string
+	AllowManagementOS bool
+}

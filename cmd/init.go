@@ -75,6 +75,7 @@ func init() {
 	// Add subcommands for vmswitchCmd
 	vmswitchCmd.AddCommand(
 		vmswitchListCmd,
+		vmswitchCreateCmd,
 	)
 
 	//Option of vmswitchListCmd
@@ -82,4 +83,9 @@ func init() {
 	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.External, "external", "e", false, "display external vmswitch")
 	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.internal, "internal", "i", false, "display internal vmswitch")
 	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.Private, "private", "p", false, "display private vmswitch")
+	//Option of vmswitchCreateCmd
+	vmswitchCreateCmd.Flags().StringVarP(&vmswitchCreateOption.NewVmswitchName, "name", "n", "", "new VMSwitch Name")
+	vmswitchCreateCmd.Flags().StringVarP(&vmswitchCreateOption.NewVmswitchType, "type", "t", "", "new VMSwitch Type")
+	vmswitchCreateCmd.Flags().StringVarP(&vmswitchCreateOption.NetAdapterName, "adapter", "a", "", "netAdapter Name")
+	vmswitchCreateCmd.Flags().BoolVarP(&vmswitchCreateOption.AllowManagementOS, "management-os", "m", false, "allow management os")
 }
