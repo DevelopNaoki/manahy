@@ -150,7 +150,8 @@ var vmRebootCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-		} // Multiple VM name specification supported
+		}
+		// Multiple VM name specification supported
 		for i := range args {
 			err := hyperv.RebootVm(args[i], vmForceReboot)
 			if err != nil {
