@@ -11,7 +11,7 @@ import (
 func GetVmswitchList() (vmswitchList []Vmswitch, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "(Get-Vmswitch | Format-List Id, Name, SwitchType | Out-String).Trim()").Output()
 	if err != nil {
-		return vmswitchList, fmt.Errorf("failed get vm list: command execution error")
+		return vmswitchList, fmt.Errorf("failed get vmswitch list: command execution error")
 	}
 
 	vms := regexp.MustCompile("\r\n\r\n|\n\n").Split(string(res), -1)
@@ -36,6 +36,21 @@ func GetVmswitchList() (vmswitchList []Vmswitch, err error) {
 	return vmswitchList, nil
 }
 
+func GetVmswitchType(vmswitchName string) (vmswitchType string, err error) {
+	res, err := exec.Command("powershell", "-NoProfile", "(Get-Vmswitch | Where-Object Name -eq "+vmswitchName+").SwitchType").Output()
+	if err != nil {
+		return "err", fmt.Errorf("failed get vm list: command execution error")
+	}
+
+	vmswitchType = string(res)
+
+	return vmswitchType, nil
+}
+
+func GetVmswitchTypeById(VmswitchId string) error {
+	return nil
+}
+
 func CreateVmswitch(newVmswitch NewVmswitch) error {
 	var cmd = "New-VMSwitch -Name " + newVmswitch.NewVmswitchName
 	if strings.ToLower(newVmswitch.NewVmswitchType) == "external" {
@@ -56,5 +71,9 @@ func CreateVmswitch(newVmswitch NewVmswitch) error {
 		return fmt.Errorf("failed create switch: command execution error")
 	}
 
+	return nil
+}
+
+func RemoveVmswitch(vmswitchName string) error {
 	return nil
 }

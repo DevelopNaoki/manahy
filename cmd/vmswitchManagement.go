@@ -32,10 +32,13 @@ var vmswitchListCmd = &cobra.Command{
 			vmswitchListOption.All = false
 		}
 
+		fmt.Print("Get VMSwitch List...")
 		vmswitchList, err := hyperv.GetVmswitchList()
 		if err != nil {
+			fmt.Print("\rGet VMSwitch List...\t [\x1b[31mFalse\x1b[0m]\n")
 			return err
 		}
+		fmt.Print("\rGet VMSwitch List...\t [\x1b[32mOK\x1b[0m]\n")
 
 		// Find the number of characters of the longest VMSwitch
 		// name in the list of VMSwitchs obtained.
@@ -86,10 +89,13 @@ var vmswitchCreateCmd = &cobra.Command{
 	Short: "Create VMSwitch list",
 	Args:  cobra.RangeArgs(0, 0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Print("Creating VMSwitch...")
 		err := hyperv.CreateVmswitch(vmswitchCreateOption)
 		if err != nil {
-			return nil
+			fmt.Print("Create VMSwitch...\t [\x1b[31mFalse\x1b[0m]\n")
+			return err
 		}
+		fmt.Print("Create VMSwitch...\t [\x1b[32mOK\x1b[0m]\n")
 		return nil
 	},
 }
