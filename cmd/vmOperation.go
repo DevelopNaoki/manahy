@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/DevelopNaoki/manahy/hyperv"
 	"github.com/spf13/cobra"
 )
@@ -11,9 +13,11 @@ var vmStartCmd = &cobra.Command{
 	Short: "start VM",
 	Args:  cobra.RangeArgs(0, 100),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Print("Starting VM...")
 		if vmId != "" {
 			err := hyperv.StartVmById(vmId)
 			if err != nil {
+				fmt.Print("Starting VM...\t [\x1b[31mFalse\x1b[0m]\n")
 				return err
 			}
 		}
@@ -21,9 +25,11 @@ var vmStartCmd = &cobra.Command{
 		for i := range args {
 			err := hyperv.StartVm(args[i])
 			if err != nil {
+				fmt.Print("Starting VM...\t [\x1b[31mFalse\x1b[0m]\n")
 				return err
 			}
 		}
+		fmt.Print("Starting VM...\t [\x1b[32mOK\x1b[0m]\n")
 		return nil
 	},
 }
