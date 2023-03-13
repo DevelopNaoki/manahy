@@ -52,16 +52,16 @@ func GetVmswitchTypeById(VmswitchId string) error {
 }
 
 func CreateVmswitch(newVmswitch NewVmswitch) error {
-	var cmd = "New-VMSwitch -Name " + newVmswitch.NewVmswitchName
+	var cmd = "New-VMSwitch -Name "+newVmswitch.NewVmswitchName
 	if strings.ToLower(newVmswitch.NewVmswitchType) == "external" {
 		if newVmswitch.NetAdapterName != "" {
-			cmd = cmd + " -NetAdapterName " + newVmswitch.NetAdapterName
-			cmd = cmd + " -AllowManagementOS " + strconv.FormatBool(newVmswitch.AllowManagementOS)
+			cmd = cmd+" -NetAdapterName "+newVmswitch.NetAdapterName
+			cmd = cmd+" -AllowManagementOS "+strconv.FormatBool(newVmswitch.AllowManagementOS)
 		} else {
 			return fmt.Errorf("read error: need NetAdapterName")
 		}
 	} else if strings.ToLower(newVmswitch.NewVmswitchType) == "internal" || strings.ToLower(newVmswitch.NewVmswitchType) == "private" {
-		cmd = cmd + "  -SwitchType " + strings.ToLower(newVmswitch.NewVmswitchType)
+		cmd = cmd+"  -SwitchType "+strings.ToLower(newVmswitch.NewVmswitchType)
 	} else {
 		return fmt.Errorf("read error: unknown SwitchType %s", newVmswitch.NewVmswitchType)
 	}

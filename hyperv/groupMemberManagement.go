@@ -14,6 +14,7 @@ func GetGroupMember() (groupMenbers []string, err error) {
 
 	members := regexp.MustCompile("\r\n|\n").Split(string(res), -1)
 	for i := range members {
+		// Delete Header
 		if i < 2 {
 			continue
 		}
