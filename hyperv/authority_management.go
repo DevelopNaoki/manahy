@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-// // Display the list of Hyper-V administrator users
+// Display the list of Hyper-V administrator users
 func GetGroupMember() (groupMenbers []string, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "(Get-LocalGroupMember -Group 'Hyper-V Administrators' | Format-Table Name | Out-String).Trim()").Output()
 	if err != nil {
