@@ -6,6 +6,7 @@ import (
 	"regexp"
 )
 
+// // Display the list of Hyper-V administrator users
 func GetGroupMember() (groupMenbers []string, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "(Get-LocalGroupMember -Group 'Hyper-V Administrators' | Format-Table Name | Out-String).Trim()").Output()
 	if err != nil {
@@ -26,6 +27,7 @@ func GetGroupMember() (groupMenbers []string, err error) {
 	return groupMenbers, nil
 }
 
+// Add Hyper-V administrator user
 func AddGroupMember(name string) error {
 	_, err := exec.Command("powershell", "-NoProfile", "Add-LocalGroupMember -Group 'Hyper-V Administrators'-Member "+name).Output()
 	if err != nil {
@@ -34,6 +36,7 @@ func AddGroupMember(name string) error {
 	return nil
 }
 
+// Remove Hyper-V administrator privileges
 func RemoveGroupMember(name string) error {
 	_, err := exec.Command("powershell", "-NoProfile", "Remove-LocalGroupMember -Group 'Hyper-V Administrators'-Member "+name).Output()
 	if err != nil {
