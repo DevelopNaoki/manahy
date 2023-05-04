@@ -83,6 +83,7 @@ func init() {
 	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.External, "external", "e", false, "display external vmswitch")
 	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.internal, "internal", "i", false, "display internal vmswitch")
 	vmswitchListCmd.Flags().BoolVarP(&vmswitchListOption.Private, "private", "p", false, "display private vmswitch")
+	vmswitchListCmd.Flags().StringVarP(&vmswitchListOption.Type, "type", "t", "all", "dissplay enter type vmswitch")
 	//Option of vmswitchCreateCmd
 	vmswitchCreateCmd.Flags().StringVarP(&vmswitchCreateOption.NewVmswitchName, "name", "n", "", "new VMSwitch Name")
 	vmswitchCreateCmd.Flags().StringVarP(&vmswitchCreateOption.NewVmswitchType, "type", "t", "", "new VMSwitch Type")
