@@ -36,7 +36,7 @@ func AddGroupMember(name string) error {
 	return nil
 }
 
-// Remove Hyper-V administrator privileges
+// Remove Hyper-V administrator user
 func RemoveGroupMember(name string) error {
 	_, err := exec.Command("powershell", "-NoProfile", "Remove-LocalGroupMember -Group 'Hyper-V Administrators'-Member "+name).Output()
 	if err != nil {
