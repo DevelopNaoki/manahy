@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/DevelopNaoki/manahy/hyperv"
 	"github.com/DevelopNaoki/manahy/internal"
@@ -21,6 +22,7 @@ var vmswitchListOption struct {
 	External bool
 	internal bool
 	Private  bool
+	Type	 string
 }
 var vmswitchListCmd = &cobra.Command{
 	Use:   "list",
@@ -66,17 +68,14 @@ var vmswitchListCmd = &cobra.Command{
 
 		// Print vmswitch list
 		for i := range vmswitchList {
-			// Do not display results that do not match the options
-			e_disable := vmswitchList[i].VmswitchType == "External" && (!vmswitchListOption.External && !vmswitchListOption.All)
-			i_disable := vmswitchList[i].VmswitchType == "Internal" && (!vmswitchListOption.internal && !vmswitchListOption.All)
-			p_disable := vmswitchList[i].VmswitchType == "Private" && (!vmswitchListOption.Private && !vmswitchListOption.All)
-			if e_disable || i_disable || p_disable {
+			if !strings.EqualFold(vmswitchList[i].VmswitchType, vmswitchListOption.Type && !strings.EqualFold(vmswitchListOption.Type, "all")) {
 				continue
-			} else {
-				fmt.Printf("%s\t", vmswitchList[i].VmswitchId)
-				fmt.Printf("%s\t", vmswitchList[i].VmswitchName)
-				fmt.Printf("%s\t", vmswitchList[i].VmswitchType)
 			}
+			
+			fmt.Printf("%s\t", vmswitchList[i].VmswitchId)
+			fmt.Printf("%s\t", vmswitchList[i].VmswitchName)
+			fmt.Printf("%s\t", vmswitchList[i].VmswitchType)
+			
 			fmt.Print("\n")
 		}
 		return nil
