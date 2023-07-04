@@ -17,8 +17,7 @@ var RootCmd = &cobra.Command{
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "print manahy version",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print("manahy version 0.0.0 (beta)\n")
-		return nil
 	},
 }
