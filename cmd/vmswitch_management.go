@@ -22,7 +22,7 @@ var vmswitchListOption struct {
 	External bool
 	internal bool
 	Private  bool
-	Type	 string
+	Type     string
 }
 var vmswitchListCmd = &cobra.Command{
 	Use:   "list",
@@ -68,14 +68,14 @@ var vmswitchListCmd = &cobra.Command{
 
 		// Print vmswitch list
 		for i := range vmswitchList {
-			if !strings.EqualFold(vmswitchList[i].VmswitchType, vmswitchListOption.Type && !strings.EqualFold(vmswitchListOption.Type, "all")) {
+			if !strings.EqualFold(vmswitchList[i].VmswitchType, vmswitchListOption.Type) && !strings.EqualFold(vmswitchListOption.Type, "all") {
 				continue
 			}
-			
+
 			fmt.Printf("%s\t", vmswitchList[i].VmswitchId)
 			fmt.Printf("%s\t", vmswitchList[i].VmswitchName)
 			fmt.Printf("%s\t", vmswitchList[i].VmswitchType)
-			
+
 			fmt.Print("\n")
 		}
 		return nil

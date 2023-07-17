@@ -1,6 +1,6 @@
 package logging
 
-inport (
+import (
 )
 
 func Logginng(log string) {

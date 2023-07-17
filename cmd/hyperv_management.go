@@ -19,7 +19,7 @@ var hypervCheckCmd = &cobra.Command{
 	Use:   "check",
 	Short: "check Hyper-V Enabled",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		isEnable, err := hyperv.CheckHypervEnabled()
+		isEnable, err := hyperv.IsHypervEnabled()
 
 		if isEnable {
 			fmt.Printf("Check Hyper-V is Enable...\t\t[\x1b[32mEnabled\x1b[0m]\n")

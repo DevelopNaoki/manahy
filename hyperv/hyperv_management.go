@@ -8,7 +8,7 @@ import (
 )
 
 // Check is Hyper-V enable
-func IsEnabled() (enabled bool, err error) {
+func IsHypervEnabled() (enabled bool, err error) {
 	res, err := exec.Command("powershell", "-NoProfile", "(Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V).State").Output()
 	if err != nil {
 		return false, fmt.Errorf("failed check if Hyper-V is enabled: command execution error")
@@ -20,7 +20,7 @@ func IsEnabled() (enabled bool, err error) {
 }
 
 func EnableHyperv() error {
-	isEnabled, err := IsEnabled()
+	isEnabled, err := IsHypervEnabled()
 	if err != nil {
 		return err
 	}
